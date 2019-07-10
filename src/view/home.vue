@@ -1,7 +1,6 @@
 <template>
   <div class="home" id="home">
     <section class="section">
-111
     </section>
   </div>
 </template>
