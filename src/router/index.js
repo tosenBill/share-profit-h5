@@ -14,9 +14,18 @@ const routes = [
   {
     path: '/',
     component: Index,
+    redirect: '/loginIn',
     children: [
       {
         path: '/',
+        name: 'loginIn',
+        meta: {
+          keepAlive: true // 需要被缓存
+        },
+        component: () => import('@/view/loginIn.vue')
+      },
+      {
+        path: '/home',
         name: 'home',
         meta: {
           keepAlive: true // 需要被缓存
@@ -24,12 +33,60 @@ const routes = [
         component: () => import('@/view/home.vue')
       },
       {
-        path: '/register',
-        name: 'register',
+        path: '/loginOut',
+        name: 'loginOut',
         meta: {
           keepAlive: true // 需要被缓存
         },
-        component: () => import('@/view/register.vue')
+        component: () => import('@/view/loginOut.vue')
+      },
+      {
+        path: '/userInfo',
+        name: 'userInfo',
+        meta: {
+          keepAlive: true // 需要被缓存
+        },
+        component: () => import('@/view/userInfo.vue')
+      },
+      {
+        path: '/changePassword',
+        name: 'changePassword',
+        meta: {
+          keepAlive: true // 需要被缓存
+        },
+        component: () => import('@/view/changePassword.vue')
+      },
+      {
+        path: '/myGroup',
+        name: 'myGroup',
+        meta: {
+          keepAlive: true // 需要被缓存
+        },
+        component: () => import('@/view/myGroup.vue')
+      },
+      {
+        path: '/handleCardInfo',
+        name: 'handleCardInfo',
+        meta: {
+          keepAlive: true // 需要被缓存
+        },
+        component: () => import('@/view/handleCardInfo.vue')
+      },
+      {
+        path: '/addGroupPerson',
+        name: 'addGroupPerson',
+        meta: {
+          keepAlive: true // 需要被缓存
+        },
+        component: () => import('@/view/addGroupPerson.vue')
+      },
+      {
+        path: '/handlePersonInfo',
+        name: 'handlePersonInfo',
+        meta: {
+          keepAlive: true // 需要被缓存
+        },
+        component: () => import('@/view/handlePersonInfo.vue')
       }
     ]
   }

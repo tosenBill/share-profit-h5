@@ -33,6 +33,7 @@ export default {
   .child-view {
     position: absolute;
     width: 100%;
+    height 100%;
     transition: all .2s cubic-bezier(.55, 0, .1, 1)
   }
   .slide-left-enter,

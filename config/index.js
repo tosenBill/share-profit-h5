@@ -11,8 +11,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'http://kyj.meixuanlife.com',
-        // target:'http://192.168.1.88:8082',
+        // target: 'http://kyj.meixuanlife.com',
+        target:'http://192.168.1.89:8888',
         changeOrigin: true,  //是否跨域
         pathRewrite: {
           '^/api': ''

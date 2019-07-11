@@ -1,21 +1,19 @@
 
-let ONLINE_ROOT_PATH, OFFLINE_ROOT_PATH
+let ONLINE_ROOT_PATH
 
 switch (process.env.NODE_ENV) {
   case 'development':
-    ONLINE_ROOT_PATH = 'http://dpmanagement.17dianjia.net/api/'
-    OFFLINE_ROOT_PATH = 'http://111.17dianjia.net/api/'
+    // ONLINE_ROOT_PATH = '192.168.1.88:8082/'
+    // ONLINE_ROOT_PATH = 'http://kyj.meixuanlife.com'
+    ONLINE_ROOT_PATH = '/api'
     break
   case 'production':
-    ONLINE_ROOT_PATH = 'http://dpmanagement.dianjia001.com/api/'
-    OFFLINE_ROOT_PATH = 'http://111.17dianjia.net/api/'
+    ONLINE_ROOT_PATH = 'http://kyj.meixuanlife.com'
     break
   default:
-    ONLINE_ROOT_PATH = 'http://dpmanagement.17dianjia.net/api/'
-    OFFLINE_ROOT_PATH = 'http://111.17dianjia.net/api/'
+    ONLINE_ROOT_PATH = 'http://kyj.meixuanlife.com'
     break
 }
 export default {
-  ONLINE_ROOT_PATH,
-  OFFLINE_ROOT_PATH
+  ONLINE_ROOT_PATH
 }

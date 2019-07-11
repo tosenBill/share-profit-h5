@@ -1,6 +1,6 @@
 export default {
-  getLogin (data) {
-    return this.post(this.ONLINE_ROOT_PATH + 'user/authenticate', data)
+  loginIn (data) {
+    return this.post(this.ONLINE_ROOT_PATH + '/login/pass', data)
   },
   register () {
     // return this.ROOT_PATH + 'user/register'
