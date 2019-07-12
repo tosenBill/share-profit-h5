@@ -71,4 +71,8 @@
   flex :1;
   font-size: 15px;
   padding: 10px 0;
+  border: none;
+  outline: none;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }

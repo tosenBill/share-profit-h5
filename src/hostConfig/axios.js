@@ -2,6 +2,7 @@
 // import Host from '@/config/host'
 import axios from 'axios'
 import Qs from 'qs'
+// import { read } from 'fs';
 // import ROOT_PATH from './host.config'
 
 // 请求超时时间
@@ -18,7 +19,7 @@ axios.interceptors.request.use(
     // 每次发送请求之前判断是否存在token，如果存在，则统一在http请求的header都加上token，不用每次请求都手动添加了
     // 即使本地存在token，也有可能token是过期的，所以在响应拦截器中要对返回状态进行判断
     const token = sessionStorage.getItem('token')
-    console.log(token)
+    // console.log(token)
     // token && (config.headers.access_token = token)
     if (token) {
       config.headers = {
@@ -35,41 +36,50 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
   res => {
-    let _data
+    // let _data = res.data
+    // console.log(_data)
     if (res.status === 200) {
       // console.log('res', res)
-      _data = res.data
-      console.log(_data.code)
+      // console.log('_data', _data)
+      // if (res.code !== '0000-0000') {
+      //   window._Vue.$toast({
+      //     message: _data.errMsg,
+      //     duration: 3000
+      //   })
+      // }
+      // console.log(_data.code)
+      /*
       if (Object.prototype.toString.call(_data).slice(8, -1) === 'Object') {
-        // if (_data.code !== '0000-0000') {
-        //   window._Vue.$notify({
-        //     message: _data.errMsg,
-        //     duration: 1000,
-        //     background: '#ff4444'
-        //   })
-        // }
-        // switch (_data.code) {
-        //   case 1001:
-        //     // window._Vue.$store.dispatch("loginOut")
-        //     window._Vue.$notify({
-        //       message: _data.message,
-        //       duration: 1000,
-        //       background: '#ff4444'
-        //     })
-        //     break
-        //   case 1002: {
-        //     window._Vue.$notify({
-        //       message: _data.message,
-        //       duration: 1000,
-        //       background: '#ff4444'
-        //     })
-        //     _data = null
-        //     break
-        //   }
-        // }
+        if (_data.code !== '0000-0000') {
+          window._Vue.$notify({
+            message: _data.errMsg,
+            duration: 1000,
+            background: '#ff4444'
+          })
+        }
+        switch (_data.code) {
+          case 1001:
+            // window._Vue.$store.dispatch("loginOut")
+            window._Vue.$notify({
+              message: _data.message,
+              duration: 1000,
+              background: '#ff4444'
+            })
+            break
+          case 1002: {
+            window._Vue.$notify({
+              message: _data.message,
+              duration: 1000,
+              background: '#ff4444'
+            })
+            _data = null
+            break
+          }
+        }
       }
+      */
     }
-    return _data
+    return res
   },
   err => {
     switch (err.response.status) {
@@ -90,11 +100,17 @@ axios.interceptors.response.use(
       case 405:
       case 500:
       default:
-        if (err.response.data && err.response.data.message) {
-          window._Vue.$message.error(err.response.data.message)
-        } else {
-          window._Vue.$message.error('服务器错误')
-        }
+        console.log('server err')
+        window._Vue.$notify({
+          message: '服务器错误',
+          duration: 1000,
+          background: '#ff4444'
+        })
+        // if (err.response.data && err.response.data.message) {
+        //   window._Vue.$message.error(err.response.data.message)
+        // } else {
+        //   window._Vue.$message.error('服务器错误')
+        // }
         break
     }
     return err.response
@@ -126,10 +142,9 @@ export const get = (url, ...params) => {
 */
 export const post = (url, ...params) => {
   return new Promise((resolve, reject) => {
-    const paramsaa = Qs.stringify(...params)
-
-    console.log('params', JSON.stringify(...params))
-    axios.post(url, paramsaa)
+    // const qsParams = Qs.stringify(...params)
+    // console.log('params', qsParams)
+    axios.post(url, Qs.stringify(...params))
       .then(res => {
         resolve(res.data)
       })

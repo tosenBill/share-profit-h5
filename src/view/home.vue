@@ -3,15 +3,15 @@
     <header>
       <div class="user-info">
         <div>
-          <img src="static/images/icon-header.png" alt="">
-          <span>15591611037</span>
+          <img src="static/images/default-icon.jpg" alt="">
+          <span>{{userInfo.cellPhone || ''}}</span>
         </div>
         <span @click="go_loginout" class="arrow arrow-right"></span>
       </div>
     </header>
     <section>
       <div class="list">
-        <div class="item-info" @click="item_handle(1)">
+        <div class="item-info" @click="item_handle(1)" v-if="userInfo.type == '1'">
           <span class="label">我的团队</span>
           <span class="arrow arrow-right"></span>
         </div>
@@ -23,7 +23,7 @@
           <span class="label">添加团队成员</span>
           <span class="arrow arrow-right"></span>
         </div>
-        <div class="item-info" @click="item_handle(4)">
+        <div class="item-info" @click="item_handle(4)"  v-if="userInfo.type == '1'">
           <span class="label">添加办卡人信息</span>
           <span class="arrow arrow-right"></span>
         </div>
@@ -32,6 +32,13 @@
   </div>
 </template>
 <script>
+import * as types from '@/store/type'
+import { mapGetters } from 'vuex'
+
+import {
+  Toast
+} from 'vant'
+
 export default {
   data () {
     return {
@@ -39,13 +46,26 @@ export default {
     }
   },
   components: {
+    Toast
   },
   computed: {
+    ...mapGetters(['userInfo'])
   },
   mounted () {
-    this.showList = true
+    this.getUserInfo()
   },
   methods: {
+    async getUserInfo () {
+      const userInfo = await this.$http.getUserInfo().catch()
+      console.log(userInfo)
+      if (userInfo && userInfo.code === '00000-00000') {
+        //
+        this.$store.commit(types.SET_USER_INFO, userInfo.data)
+        console.log(this.userInfo)
+      } else {
+        this.$toast('请输入旧密码')
+      }
+    },
     go_loginout () {
       this.$router.push({
         path: `/loginOut`
@@ -101,7 +121,7 @@ export default {
             width:40px;
             height:40px;
             background:rgba(216,216,216,1);
-            border-radius 50%
+            // border-radius 50%
             margin-left 10px
           }
           span{

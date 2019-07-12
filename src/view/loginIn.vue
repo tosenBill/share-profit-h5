@@ -13,7 +13,7 @@
               <div class="label">
                 <img class="icon-header" src="static/images/icon-header.png" alt="">
               </div>
-              <input v-model.trim="loginForm.cellPhone" type="number" placeholder="请输入手机号码" @blur="input_blur" class="">
+              <input v-model.trim="loginForm.cellPhone" type="number" pattern="[0-9]*" placeholder="请输入手机号码" @blur="input_blur" class="">
             </div>
             <div class="input-box">
               <div class="label">
@@ -35,7 +35,7 @@
               <input v-model.trim="forgotForm.cellPhone" type="number" placeholder="请输入手机号码" @blur="input_blur" class="">
             </div>
             <div class="input-box code">
-              <input v-model.trim="forgotForm.code" oninput="if(value.length>6)value=value.slice(0,6)" type="number" @blur="input_blur" placeholder="请输入验证码" class="">
+              <input v-model="forgotForm.code" oninput="if(value.length>6)value=value.slice(0,6)" type="number" @blur="input_blur" placeholder="验证码">
               <div class="getcode">
                 <span v-if="cutDown == 60" @click="get_code_handle" class="get">获取验证码</span>
                 <span v-else class="timedown">{{cutDown}}s</span>
@@ -58,6 +58,7 @@
   </div>
 </template>
 <script>
+import * as types from '@/store/type'
 
 import {
   Toast
@@ -93,13 +94,18 @@ export default {
     },
     get_code_handle () {
       console.log(111)
-      if (this.validatePhone(this.forgotForm.phone)) {
-        this.startInterval()
+      if (this.validatePhone(this.forgotForm.cellPhone)) {
         // 掉接口
-        // this.$http.getIdendityCord({cellPhone: this.forgotForm.phone})
-        //   .then(res => {
-        //     console.log(res)
-        //   })
+        this.$http.sendCode({cellPhone: this.forgotForm.cellPhone})
+          .then(res => {
+            // console.log(res)
+            if (res.code === '00000-00000') {
+              this.showToast('验证码已发送')
+              this.startInterval()
+            } else {
+              this.showToast(res.errMsg)
+            }
+          })
       }
     },
     validatePhone (phone) {
@@ -119,7 +125,7 @@ export default {
       //   this.showToast('密码必须大于6位字符')
       //   return 0
       // }
-      if (!this.validatePhone(data.phone)) {
+      if (!this.validatePhone(data.cellPhone)) {
         return 0
       } else if (!data.code) {
         this.showToast('请输入验证码')
@@ -170,14 +176,19 @@ export default {
         })
         // 掉接口
         const params = {
-          verificationCode: this.forgotForm.code,
-          cellPhone: this.forgotForm.phone
+          cellPhone: this.forgotForm.cellPhone,
+          pwdCode: this.forgotForm.code,
+          newPass: this.forgotForm.password
         }
-        const confirm = await this.$http.confirm(params).catch(err => console.log(err))
-        if (confirm && confirm.data) {
+        const confirm = await this.$http.setPassword(params).catch(err => console.log(err))
+        if (confirm && confirm.code === '00000-00000') {
           // ...
+          this.showToast('设置成功')
+          setTimeout(() => {
+            this.showLoginForm = true
+          }, 1000)
         } else {
-          this.showToast('获取用户信息失败！')
+          this.showToast(confirm.errMsg)
         }
         this.loadingToast.clear()
         this.canSubmit = true
@@ -227,15 +238,17 @@ export default {
 
         const loginIn = await this.$http.loginIn(params).catch(err => console.log(err))
         console.log(loginIn)
-        if (loginIn && loginIn.token) {
+        if (loginIn && loginIn.code === '00000-00000') {
           // ...
-          sessionStorage.setItem('token', loginIn.token)
+          sessionStorage.setItem('token', loginIn.data.token)
+
+          this.$store.commit(types.USER_TYPE, 1)
 
           this.$router.replace({
             path: `/home`
           })
         } else {
-          this.showToast('登录失败！')
+          loginIn && loginIn.errMsg && this.showToast(loginIn.errMsg)
         }
         this.loadingToast.clear()
         this.canSubmit = true

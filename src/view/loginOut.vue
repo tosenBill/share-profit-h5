@@ -19,6 +19,10 @@
   </div>
 </template>
 <script>
+import {
+  Toast
+} from 'vant'
+
 import HeaderNav from '@/components/HeaderNav.vue'
 export default {
   data () {
@@ -26,7 +30,8 @@ export default {
     }
   },
   components: {
-    HeaderNav
+    HeaderNav,
+    Toast
   },
   computed: {
   },
@@ -34,7 +39,22 @@ export default {
   },
   methods: {
     loginOut () {
-      localStorage.removeItem('token')
+      this.loadingToast = Toast.loading({
+        duration: 0, // 持续展示 toast
+        forbidClick: true, // 禁用背景点击
+        loadingType: 'spinner',
+        message: '正在注销...'
+      })
+      this.$http.loginOut().catch(err => {
+        console.log(err)
+        this.loadingToast.clear()
+      })
+        .then(res => {
+          this.loadingToast.clear()
+
+          sessionStorage.removeItem('token')
+          this.$router.replace({ path: '/' })
+        })
     },
     go_userInfo () {
       this.$router.push({

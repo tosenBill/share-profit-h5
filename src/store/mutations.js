@@ -8,6 +8,9 @@ const mutations = {
   },
   [types.CHANGE_TABBAR] (state, index) {
     state.tabIndex = index
+  },
+  [types.USER_TYPE] (state) {
+    state.userType = state
   }
 }
 export default mutations

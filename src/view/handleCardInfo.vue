@@ -1,12 +1,12 @@
 <template>
-  <div class="handleCardInfo fixed-bg" id="handleCardInfo">
+  <div class="handleCardInfo" id="handleCardInfo">
     <header-nav :headerNav = 'headerNav' @addHasClick="add_handle">
     </header-nav>
     <header>
       <div class="tabs">
         <div
           class="tab"
-          :class="{'active': tabIndex == index}"
+          :class="{'active': query.type == index}"
           v-for="(tab, index) in tabs"
           :key="index"
           @click="tab_index_handle(index)"
@@ -18,16 +18,35 @@
     <section class="">
       <form action="" onsubmit="return false;" @submit.prevent >
         <input
-          v-model.trim="keywords"
+          v-model.trim="query.cellPhone"
           ref="search_input"
           type="search"
           placeholder="搜索"
           @keyup.13="search_handle"
           class="search-input"
+          @blur="input_blur"
         >
       </form>
       <div class="list">
-        <div class="item">
+        <van-list
+          v-model="loading"
+          :finished="finished"
+          finished-text="没有更多了"
+          @load="onLoad"
+          :offset="10"
+          :immediate-check="true"
+        >
+          <van-cell>
+            <div class="item" v-for="(item, index) in list" :key="index">
+              <span>{{item.name || ''}}</span>
+              <span>{{item.cellPhone || ''}}</span>
+              <span></span>
+              <!-- <img src="static/images/pass.png" alt=""> -->
+            </div>
+          </van-cell>
+        </van-list>
+
+        <!-- <div class="item">
           <span>石荣成</span>
           <span>15175916591749</span>
           <img src="static/images/pass.png" alt="">
@@ -36,13 +55,15 @@
           <span>沈小童</span>
           <span>15175916591749</span>
           <img src="static/images/notpass.png" alt="">
-        </div>
+        </div> -->
       </div>
     </section>
   </div>
 </template>
 <script>
 import HeaderNav from '@/components/HeaderNav.vue'
+
+import { List } from 'vant'
 export default {
   data () {
     return {
@@ -57,42 +78,120 @@ export default {
           name: '间接信息'
         }
       ],
-      keywords: '',
-      tabIndex: 0
+      query: {
+        pageNom: 1,
+        size: 20,
+        cellPhone: '',
+        type: 0 // 直推信息代表’1‘，简推 ’0‘
+      },
+      list: [],
+      loading: false,
+      finished: false
     }
   },
   components: {
-    HeaderNav
+    HeaderNav,
+    List
   },
   computed: {
   },
   mounted () {
     this.showList = true
   },
+  activated () {
+    // this.getMyGroupList(this.query)
+    this.clearData()
+
+    // this.onLoad()
+  },
   methods: {
-    go_userInfo () {
-      this.$router.push({
-        path: `/userInfo`
-      })
+    clearData () {
+      this.query = {
+        pageNom: 1,
+        size: 20,
+        cellPhone: '',
+        type: 0
+      }
+      this.list = []
+      this.loading = false
+      this.finished = false
     },
     add_handle () {
-      console.log(222)
+      this.$router.push({
+        path: `/handlePersonInfo`
+      })
+    },
+    onLoad () {
+      console.log('触底刷新 is invoked, index:')
+      console.log(this.query.type)
+      const type = (this.query.type === 1 ? 0 : 1)
+
+      this.handleCardList({
+        ...this.query,
+        type
+      })
+    },
+    async handleCardList (params) {
+      const handleCardList = await this.$http.handleCardList(params).catch(err => console.log(err))
+
+      this.loading = false
+      if (handleCardList && handleCardList.code === '00000-00000') {
+        const _data = handleCardList.data
+        this.list.push(
+          ..._data.records
+        )
+
+        if (_data.lastPage) {
+          this.finished = true
+        }
+
+        !this.finished && this.query.pageNom++
+
+        console.log(_data.lastPage)
+      //
+      } else {
+        this.$toast(handleCardList.errMsg)
+      }
     },
     search_handle () {
-      if (!this.keywords) {
-        return
-      }
       event.preventDefault() // 默认是换行
       this.$refs.search_input.blur()
+
+      const keywords = this.query.cellPhone
+
+      this.clearData()
+      this.query.cellPhone = keywords
     },
-    tab_index_handle (tabIndex) {
-      this.tabIndex = tabIndex
+    tab_index_handle (type) {
+      this.query.type = type
+
+      this.query = {
+        pageNom: 1,
+        size: 20,
+        cellPhone: '',
+        type: type
+      }
+      this.list = []
+      this.loading = false
+      this.finished = false
+    },
+    input_blur () {
+      // document.body.scrollTop = document.documentElement.scrollTop - 1
+      setTimeout(() => {
+        var scrollHeight = document.documentElement.scrollTop || document.body.scrollTop || 0
+        window.scrollTo(0, Math.max(scrollHeight, 0))
+      }, 100)
     }
   }
 }
 </script>
 <style lang="stylus" scoped>
   #handleCardInfo{
+    .van-cell{
+      padding-left 0
+      padding-right 0
+      padding-top 0
+    }
     header{
       background: #fff;
       .tabs{
@@ -149,7 +248,20 @@ export default {
           font-family:PingFang-SC-Medium;
           font-weight:500;
           color:rgba(51,51,51,1);
-          margin-bottom 3px
+          // margin-bottom 3px
+          padding 0 20px
+          border-bottom 3px solid #EFEFF4
+          &:last-child{
+            border-bottom none
+          }
+          span{
+            flex: 1;
+            &:last-child{
+              height 40px
+              width: 40px
+              flex: inherit;
+            }
+          }
         }
       }
     }
