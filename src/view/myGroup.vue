@@ -178,13 +178,15 @@ export default {
           border-bottom 1px solid #F2F2F2
           .name,
           .phone{
+            flex: 1;
             font-size:15px;
             font-family:PingFang-SC-Medium;
             font-weight:500;
             color:rgba(51,51,51,1);
           }
           .phone{
-            margin-left 95px
+            // margin-left 95px
+            text-align center
           }
         }
       }

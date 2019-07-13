@@ -23,16 +23,17 @@
           <div class="label">办卡号码</div>
           <input v-model.trim="personInfo.cellPhone" type="number" placeholder="请输入办卡人所办号码" @blur="input_blur">
         </div>
-        <!-- <van-dropdown-menu>
-          <van-dropdown-item v-model="value1" :options="option1" />
-        </van-dropdown-menu> -->
-        <div class="form-item">
+        <van-dropdown-menu class="adolf-dropdown-menue">
+          <van-dropdown-item :title="titlePlaceholder" @change="dropdownChange" title-class="wocaonima" v-model="personInfo.setMeal" :options="option1" class="adolf-dropdown-item" />
+        </van-dropdown-menu>
+        <!-- <div class="form-item">
           <div class="label">套餐档位</div>
           <input v-model.trim="personInfo.setMeal" type="text" placeholder="请输入办卡人办理套餐档位" @blur="input_blur">
-        </div>
+        </div> -->
         <div class="form-item">
           <div class="label">办卡时间</div>
-          <input v-model.trim="personInfo.cardTime" type="text" placeholder="请输入办卡时间" @blur="input_blur">
+          <!-- <span @click="showDateTime = true" class="select-time">{{personInfo.cardTime || ''}}</span> -->
+          <input @click="showDateTime = true" readonly="readonly" v-model.trim="personInfo.cardTime" type="text" placeholder="请输入办卡时间" @blur="input_blur">
         </div>
         <div class="form-item registerToggle">
           <div class="label">是否注册每选</div>
@@ -44,6 +45,15 @@
     <footer>
       <div class="operate-btn" @click="complete">完成</div>
     </footer>
+    <div class="showTime" v-if="showDateTime">
+      <van-datetime-picker
+        class="adolf-dateTime-picker"
+        v-model="currentDate"
+        type="date"
+        @confirm="datetime_confirm"
+        @cancel="showDateTime = false"
+      />
+    </div>
   </div>
 </template>
 <script>
@@ -52,7 +62,8 @@ import {
   Toast,
   Switch,
   DropdownMenu,
-  DropdownItem
+  DropdownItem,
+  DatetimePicker
 } from 'vant'
 
 import validateRule from '@/utils/index'
@@ -70,7 +81,15 @@ export default {
         setMeal: '',
         cardTime: '',
         isMx: false
-      }
+      },
+      titlePlaceholder: '办理套餐档位',
+      option1: [
+        // { text: '办理套餐档位', value: 0 },
+        { text: '108套餐', value: 1 },
+        { text: '148套餐', value: 2 }
+      ],
+      currentDate: new Date(),
+      showDateTime: false
     }
   },
   components: {
@@ -78,7 +97,8 @@ export default {
     Toast,
     Switch,
     DropdownMenu,
-    DropdownItem
+    DropdownItem,
+    DatetimePicker
   },
   computed: {
   },
@@ -86,6 +106,20 @@ export default {
 
   },
   methods: {
+    datetime_confirm (val) {
+      this.personInfo.cardTime = val.getFullYear() + '-' + (val.getMonth() + 1) + '-' + val.getDate()
+      this.showDateTime = false
+    },
+    dropdownChange (val) {
+      this.option1.forEach(item => {
+        if (val === item.value) {
+          this.titlePlaceholder = item.text
+          this.personInfo.setMeal = item.text
+        }
+      })
+      // this.personInfo.setMeal = val
+      console.log(this.personInfo.setMeal)
+    },
     validateForm (data) {
       if (!data.name) {
         this.$toast('请输入办卡人姓名')
@@ -112,10 +146,10 @@ export default {
         this.$toast('请输入正确的所办号码')
         return 0
       } else if (!data.setMeal) {
-        this.$toast('请输入办卡人办理套餐档位')
+        this.$toast('请选择办卡人办理套餐档位')
         return 0
       } else if (!data.cardTime) {
-        this.$toast('请输入办卡时间')
+        this.$toast('请选择办卡时间')
         return 0
       } else {
         return 1
@@ -173,6 +207,7 @@ export default {
       cardTime: '',
       isMx: false
     }
+    this.titlePlaceholder = '办理套餐档位'
   }
 }
 </script>
@@ -182,6 +217,26 @@ export default {
       // border-radius: 10px 10px 0 0;
       margin-bottom: 10px;
       height: 44px;
+      text-align: left;
+      span{
+          position absolute
+          left 0
+      }
+    }
+    .van-dropdown-item{
+      margin 0 10px
+    }
+    .van-dropdown-menu__item{
+      justify-content flex-start !important
+    }
+    .adolf-dropdown-menue{
+
+    }
+    .adolf-dropdown-menue .adolf-dropdown-item{
+
+    }
+    .van-cell__title{
+      text-align left
     }
     .registerToggle{
       display flex
@@ -192,7 +247,21 @@ export default {
       justify-content center
       margin-top 50px
     }
-
+    .showTime{
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      width: 100%;
+      background: rgba(0,0,0,.6);
+      z-index: 9;
+      .adolf-dateTime-picker{
+        position absolute
+        width 100%
+        bottom 0
+      }
+    }
     ::-webkit-input-placeholder { /* WebKit browsers */
       font-size:15px;
       font-family:PingFang-SC-Medium;

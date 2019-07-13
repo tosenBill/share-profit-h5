@@ -40,7 +40,6 @@
             <div class="item" v-for="(item, index) in list" :key="index">
               <span>{{item.name || ''}}</span>
               <span>{{item.cellPhone || ''}}</span>
-              <span></span>
               <!-- <img src="static/images/pass.png" alt=""> -->
             </div>
           </van-cell>
@@ -257,9 +256,10 @@ export default {
           span{
             flex: 1;
             &:last-child{
-              height 40px
-              width: 40px
-              flex: inherit;
+              text-align center
+              // height 40px
+              // width: 40px
+              // flex: inherit;
             }
           }
         }
