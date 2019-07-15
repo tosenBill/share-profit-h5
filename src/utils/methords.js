@@ -109,5 +109,23 @@ export default {
       })
     }
     return data
+  },
+  /*
+  * 时间格式化
+  */
+  formatGMT (gmt, long) {
+    // long = !long ? false : true
+    let date = new Date(gmt)
+
+    let m = (date.getMonth() + 1)
+    let mm = '-' + (m < 10 ? '0' + m : m)
+    let d = date.getDate()
+    let dd = '-' + (d < 10 ? '0' + d : d)
+    let h = date.getHours()
+    let hh = ' ' + (h < 10 ? '0' + h : h)
+    let i = date.getMinutes()
+    let ii = ':' + (i < 10 ? '0' + i : i)
+
+    return date.getFullYear() + mm + dd + (long ? (hh + ii) : '')
   }
 }

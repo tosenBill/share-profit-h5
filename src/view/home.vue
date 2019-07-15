@@ -124,7 +124,7 @@ export default {
             width:40px;
             height:40px;
             background:rgba(216,216,216,1);
-            // border-radius 50%
+            border-radius 50%
             margin-left 10px
           }
           span{

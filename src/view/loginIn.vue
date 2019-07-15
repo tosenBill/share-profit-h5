@@ -295,7 +295,7 @@ export default {
       vertical-align middle
     }
     header{
-      min-height 220px
+      height 220px
       >img{
         height 100%
         width 100%

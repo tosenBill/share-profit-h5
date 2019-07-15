@@ -6,7 +6,7 @@
       <div class="tabs">
         <div
           class="tab"
-          :class="{'active': query.type == index}"
+          :class="{'active': query.type == index && userInfo.type != 2}"
           v-for="(tab, index) in tabs"
           :key="index"
           @click="tab_index_handle(index)"
@@ -60,6 +60,8 @@
   </div>
 </template>
 <script>
+
+import { mapGetters } from 'vuex'
 import HeaderNav from '@/components/HeaderNav.vue'
 
 import { List } from 'vant'
@@ -69,14 +71,7 @@ export default {
       headerNav: {
         hasAddBtn: true
       },
-      tabs: [
-        {
-          name: '直推信息'
-        },
-        {
-          name: '间接信息'
-        }
-      ],
+      tabs: [],
       query: {
         pageNom: 1,
         size: 20,
@@ -93,15 +88,27 @@ export default {
     List
   },
   computed: {
+    ...mapGetters(['userInfo'])
   },
   mounted () {
-    this.showList = true
   },
   activated () {
-    // this.getMyGroupList(this.query)
     this.clearData()
 
-    // this.onLoad()
+    const type = this.userInfo.type
+    console.log(type)
+    if (type === 2) {
+      this.tabs.push({
+        name: '我的办卡信息'
+      })
+    } else {
+      this.tabs.push({
+        name: '我的办卡信息'
+      },
+      {
+        name: '其他人办卡信息'
+      })
+    }
   },
   methods: {
     clearData () {
@@ -181,6 +188,9 @@ export default {
         window.scrollTo(0, Math.max(scrollHeight, 0))
       }, 100)
     }
+  },
+  deactivated () {
+    this.tabs = []
   }
 }
 </script>

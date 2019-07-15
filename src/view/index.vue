@@ -31,8 +31,9 @@ export default {
 </script>
 <style lang="stylus" scoped>
   .child-view {
-    position: absolute;
-    width: 100%;
+    // position: absolute;
+    max-width : 750px;
+    margin: 0 auto;
     height 100%;
     transition: all .2s cubic-bezier(.55, 0, .1, 1)
   }

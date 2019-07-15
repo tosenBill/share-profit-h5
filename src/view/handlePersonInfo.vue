@@ -49,7 +49,7 @@
       <van-datetime-picker
         class="adolf-dateTime-picker"
         v-model="currentDate"
-        type="date"
+        type="datetime"
         @confirm="datetime_confirm"
         @cancel="showDateTime = false"
       />
@@ -106,8 +106,23 @@ export default {
 
   },
   methods: {
+    formatGMT (gmt, long) {
+      // long = !long ? false : true
+      let date = new Date(gmt)
+
+      let m = (date.getMonth() + 1)
+      let mm = '-' + (m < 10 ? '0' + m : m)
+      let d = date.getDate()
+      let dd = '-' + (d < 10 ? '0' + d : d)
+      let h = date.getHours()
+      let hh = ' ' + (h < 10 ? '0' + h : h)
+      let i = date.getMinutes()
+      let ii = ':' + (i < 10 ? '0' + i : i)
+
+      return date.getFullYear() + mm + dd + (long ? (hh + ii) : '')
+    },
     datetime_confirm (val) {
-      this.personInfo.cardTime = val.getFullYear() + '-' + (val.getMonth() + 1) + '-' + val.getDate()
+      this.personInfo.cardTime = this.formatGMT(val, true)
       this.showDateTime = false
     },
     dropdownChange (val) {
