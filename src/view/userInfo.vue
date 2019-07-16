@@ -13,7 +13,7 @@
         </div>
         <div class="form-item">
           <div class="label">身份证号码</div>
-          <input type="number" v-model.trim="myUserInfo.idCard" placeholder="请输入您身份证号码" @blur="input_blur">
+          <input type="text" v-model.trim="myUserInfo.idCard" placeholder="请输入您身份证号码" @blur="input_blur">
         </div>
         <div class="form-item">
           <div class="label">银行卡号</div>

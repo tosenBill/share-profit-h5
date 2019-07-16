@@ -78,22 +78,24 @@
 }
 .van-dropdown-menu__item{
   justify-content: flex-start !important;
-  padding-left: 10px;
+  padding-left: 130px;
   font-size: 20px;
 }
 .van-dropdown-menu__item span{
-  font-size:18px;
   font-family:PingFangSC-Medium;
-  font-weight:500;
-  color:rgba(51,51,51,1);
+  font-size:15px;
+  font-family:PingFang-SC-Medium;
+  /* font-weight:500; */
+  color:#333;
+  /* rgb(25, 137, 250) */
 }
 .van-dropdown-menu__title::after{
-  color:rgba(51,51,51,1);
+  color:#8E8E93;
   top: 7px !important;
 }
 .van-cell--clickable:first-child .van-dropdown-item__icon{
-  color: #fff !important
+  /* color: #fff !important */
 }
 .van-cell--clickable:first-child .van-cell__title{
-  color: #323233 !important
+  /* color: #323233 !important */
 }

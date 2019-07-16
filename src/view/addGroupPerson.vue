@@ -3,6 +3,9 @@
     <header-nav/>
     <section class="padding-10">
       <div class="form-list">
+        <div class="form-item" v-if="userInfo.type == '-1'">
+          <input type="number" v-model.trim="person.recommenderPhone" placeholder="请填写推荐人手机号（选填）" @blur="input_blur">
+        </div>
         <div class="form-item">
           <input type="number" v-model.trim="person.cellPhone" placeholder="请设置登录手机号" @blur="input_blur">
         </div>
@@ -22,12 +25,14 @@ import {
   Toast
 } from 'vant'
 import HeaderNav from '@/components/HeaderNav.vue'
+import { mapGetters } from 'vuex'
 
 export default {
   data () {
     return {
       canSubmit: true,
       person: {
+        recommenderPhone: '',
         cellPhone: '',
         password: ''
       }
@@ -38,6 +43,7 @@ export default {
     Toast
   },
   computed: {
+    ...mapGetters(['userInfo'])
   },
   mounted () {
   },
@@ -47,7 +53,10 @@ export default {
       const pattern = /^[^\u4e00-\u9fa5]{0,}$/ // 不允许有中文
 
       if (!data.cellPhone) {
-        this.$toast('请输入手机号码')
+        this.$toast('请输入登录手机号')
+        return 0
+      } else if (data.recommenderPhone && !reg.test(data.recommenderPhone)) {
+        this.$toast('请输入正确的推荐人手机号')
         return 0
       } else if (!reg.test(data.cellPhone)) {
         this.$toast('请输入正确的手机号')
@@ -73,10 +82,13 @@ export default {
           message: '加载中...'
         })
         // 掉接口
-        const params = {
+        let params = {
           cellPhone: this.person.cellPhone,
           password: this.person.password
         }
+
+        this.person.recommenderPhone && (params.recommenderPhone = this.person.recommenderPhone)
+
         const confirm = await this.$http.addGroupPerson(params).catch(err => console.log(err))
 
         this.loadingToast.clear()

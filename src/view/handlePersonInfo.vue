@@ -13,19 +13,22 @@
         </div>
         <div class="form-item">
           <div class="label">身份证号码</div>
-          <input v-model.trim="personInfo.idCard" type="number" placeholder="请输入办卡人身份证号码" @blur="input_blur">
+          <input v-model.trim="personInfo.idCard" type="text" placeholder="请输入办卡人身份证号码" @blur="input_blur">
         </div>
         <div class="form-item">
           <div class="label">支付宝账号</div>
           <input v-model.trim="personInfo.aliPay" type="text" placeholder="请输入办卡人支付宝账号" @blur="input_blur">
         </div>
         <div class="form-item">
-          <div class="label">办卡号码</div>
+          <div class="label">新入网号码</div>
           <input v-model.trim="personInfo.cellPhone" type="number" placeholder="请输入办卡人所办号码" @blur="input_blur">
         </div>
-        <van-dropdown-menu class="adolf-dropdown-menue">
-          <van-dropdown-item :title="titlePlaceholder" @change="dropdownChange" title-class="wocaonima" v-model="personInfo.setMeal" :options="option1" class="adolf-dropdown-item" />
-        </van-dropdown-menu>
+        <div class="drowndown-box">
+          <div class="label">办理套餐</div>
+          <van-dropdown-menu class="adolf-dropdown-menue">
+            <van-dropdown-item :title="titlePlaceholder" @change="dropdownChange" title-class="wocaonima" v-model="personInfo.setMeal" :options="option1" class="adolf-dropdown-item" />
+          </van-dropdown-menu>
+        </div>
         <!-- <div class="form-item">
           <div class="label">套餐档位</div>
           <input v-model.trim="personInfo.setMeal" type="text" placeholder="请输入办卡人办理套餐档位" @blur="input_blur">
@@ -34,6 +37,10 @@
           <div class="label">办卡时间</div>
           <!-- <span @click="showDateTime = true" class="select-time">{{personInfo.cardTime || ''}}</span> -->
           <input @click="showDateTime = true" readonly="readonly" v-model.trim="personInfo.cardTime" type="text" placeholder="请输入办卡时间" @blur="input_blur">
+        </div>
+        <div class="form-item">
+          <div class="label">收货地址</div>
+          <input v-model.trim="personInfo.address" type="text" placeholder="请填写办卡人收货地址" @blur="input_blur">
         </div>
         <div class="form-item registerToggle">
           <div class="label">是否注册每选</div>
@@ -80,9 +87,10 @@ export default {
         idCard: '',
         setMeal: '',
         cardTime: '',
-        isMx: false
+        isMx: false,
+        address: ''
       },
-      titlePlaceholder: '办理套餐档位',
+      titlePlaceholder: '请选择办理套餐档位',
       option1: [
         // { text: '办理套餐档位', value: 0 },
         { text: '108套餐', value: 1 },
@@ -166,6 +174,12 @@ export default {
       } else if (!data.cardTime) {
         this.$toast('请选择办卡时间')
         return 0
+      } else if (!data.address) {
+        this.$toast('请输入办卡人收货地址')
+        return 0
+      } else if (data.address.length > 80) {
+        this.$toast('收货地址不能大于80个字符')
+        return 0
       } else {
         return 1
       }
@@ -220,9 +234,10 @@ export default {
       idCard: '',
       setMeal: '',
       cardTime: '',
+      address: '',
       isMx: false
     }
-    this.titlePlaceholder = '办理套餐档位'
+    this.titlePlaceholder = '请选择办理套餐档位'
   }
 }
 </script>
@@ -241,17 +256,27 @@ export default {
     .van-dropdown-item{
       margin 0 10px
     }
-    .van-dropdown-menu__item{
-      justify-content flex-start !important
-    }
-    .adolf-dropdown-menue{
-
-    }
-    .adolf-dropdown-menue .adolf-dropdown-item{
-
-    }
-    .van-cell__title{
-      text-align left
+    // .van-dropdown-menu__item{
+    //   justify-content flex-start !important
+    // }
+    // .van-cell__title{
+    //   text-align left
+    // }
+    .drowndown-box{
+      position relative
+      .label{
+        position: absolute;
+        left: 0;
+        z-index: 99;
+        min-width:120px;
+        font-size:18px;
+        font-family:PingFangSC-Medium;
+        font-weight:500;
+        color:rgba(51,51,51,1);
+        text-align: left;
+        height:44px;
+        padding: 8px 10px;
+      }
     }
     .registerToggle{
       display flex
