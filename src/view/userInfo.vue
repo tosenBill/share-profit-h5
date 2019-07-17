@@ -27,6 +27,10 @@
           <div class="label">支付宝账号</div>
           <input type="text" v-model.trim="myUserInfo.aliPay" placeholder="请输入您的支付宝账号" @blur="input_blur">
         </div>
+        <div class="form-item">
+          <div class="label">收货地址</div>
+          <input v-model.trim="myUserInfo.address" type="text" placeholder="请填写收货地址" @blur="input_blur">
+        </div>
       </div>
     </section>
     <footer>
@@ -54,7 +58,8 @@ export default {
         idCard: '',
         bankCard: '',
         openingBank: '',
-        aliPay: ''
+        aliPay: '',
+        address: ''
       },
       canSubmit: true
     }
@@ -66,14 +71,25 @@ export default {
   computed: {
     ...mapGetters(['userInfo'])
   },
-  mounted () {
-    console.log('userInfo mounted invoked!')
+  activated () {
     const userInfo = this.userInfo
+    console.log(userInfo)
     this.myUserInfo = {
       ...this.myUserInfo,
       ...userInfo
     }
     console.log(this.myUserInfo)
+  },
+  mounted () {
+    console.log('userInfo mounted invoked!')
+
+    // const userInfo = this.userInfo
+    // console.log(userInfo)
+    // this.myUserInfo = {
+    //   ...this.myUserInfo,
+    //   ...userInfo
+    // }
+    // console.log(this.myUserInfo)
   },
   methods: {
     validateForm (data) {
@@ -94,6 +110,12 @@ export default {
         return 0
       } else if (!data.aliPay) {
         this.$toast('请输入您的支付宝账号')
+        return 0
+      } else if (!data.address) {
+        this.$toast('请输入您的收货地址')
+        return 0
+      } else if (data.address.length > 80) {
+        this.$toast('收货地址不能大于80个字符')
         return 0
       } else if (!validateRule.isPhoneNum(data.cellPhone)) {
         this.$toast('请输入正确的联系号码')
