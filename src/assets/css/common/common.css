@@ -96,6 +96,11 @@
 .van-cell--clickable:first-child .van-dropdown-item__icon{
   /* color: #fff !important */
 }
+.van-cell--clickable .van-cell__title{
+  font-weight:bold;
+  text-align: center;
+
+}
 .van-cell--clickable:first-child .van-cell__title{
-  /* color: #323233 !important */
+  color: #323233 !important;
 }
