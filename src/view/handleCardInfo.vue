@@ -33,8 +33,8 @@
           :finished="finished"
           finished-text="没有更多了"
           @load="onLoad"
-          :offset="10"
-          :immediate-check="true"
+          @check="check_scroll"
+          :offset="50"
         >
           <van-cell>
             <div class="item" v-for="(item, index) in list" :key="index">
@@ -76,7 +76,7 @@ export default {
         pageNom: 1,
         size: 20,
         cellPhone: '',
-        type: 0 // 直推信息代表’1‘，简推 ’0‘
+        type: 0 // 直推信息代表’1‘，间推 ’0‘
       },
       list: [],
       loading: false,
@@ -94,7 +94,7 @@ export default {
   },
   activated () {
     this.clearData()
-
+    window.scrollTo(0, 1)
     const type = this.userInfo.type
     console.log(type)
     if (type === 2) {
@@ -108,6 +108,10 @@ export default {
       {
         name: '其他人办卡信息'
       })
+    }
+
+    if (this.loading) {
+      // this.onLoad()
     }
   },
   methods: {
@@ -126,6 +130,9 @@ export default {
       this.$router.push({
         path: `/handlePersonInfo`
       })
+    },
+    check_scroll (arg) {
+      console.log('arg', arg)
     },
     onLoad () {
       console.log('触底刷新 is invoked, index:')
@@ -167,9 +174,14 @@ export default {
 
       this.clearData()
       this.query.cellPhone = keywords
+
+      window.scrollTo(0, 1)
     },
     tab_index_handle (type) {
       this.query.type = type
+      this.loading = false
+      this.finished = false
+      this.list = []
 
       this.query = {
         pageNom: 1,
@@ -177,9 +189,8 @@ export default {
         cellPhone: '',
         type: type
       }
-      this.list = []
-      this.loading = false
-      this.finished = false
+      window.scrollTo(0, 1)
+      // this.onLoad()
     },
     input_blur () {
       // document.body.scrollTop = document.documentElement.scrollTop - 1

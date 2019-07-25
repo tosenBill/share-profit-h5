@@ -3,8 +3,8 @@
     <header-nav/>
     <section class="padding-10">
       <div class="form-list">
-        <div class="form-item" v-if="userInfo.type == '-1'">
-          <input type="number" v-model.trim="person.recommenderPhone" placeholder="请填写推荐人手机号（选填）" @blur="input_blur">
+        <div class="form-item">
+          <input type="number" v-model.trim="person.recommenderPhone" placeholder="请填写推荐人手机号(选填)" @blur="input_blur">
         </div>
         <div class="form-item">
           <input type="number" v-model.trim="person.cellPhone" placeholder="请设置登录手机号" @blur="input_blur">
@@ -55,11 +55,11 @@ export default {
       if (!data.cellPhone) {
         this.$toast('请输入登录手机号')
         return 0
-      } else if (data.recommenderPhone && !reg.test(data.recommenderPhone)) {
-        this.$toast('请输入正确的推荐人手机号')
-        return 0
       } else if (!reg.test(data.cellPhone)) {
         this.$toast('请输入正确的手机号')
+        return 0
+      } else if (data.recommenderPhone && !reg.test(data.recommenderPhone)) {
+        this.$toast('请输入正确的推荐人手机号')
         return 0
       } else if (!data.password) {
         this.$toast('请输入密码')

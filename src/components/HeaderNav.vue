@@ -4,9 +4,9 @@
       <div class="back-box">
         <span @click="go_back" class="arrow arrow-left"></span>
       </div>
-      <div class="add-box" v-if="headerNav && headerNav.hasAddBtn" @click="add_handle">
+      <!-- <div class="add-box" v-if="headerNav && headerNav.hasAddBtn" @click="add_handle">
         <strong class="add-btn">＋</strong>
-      </div>
+      </div> -->
     </header>
   </div>
 </template>

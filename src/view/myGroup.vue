@@ -77,6 +77,7 @@ export default {
     // this.getMyGroupList(this.query)
     this.clearData()
 
+    window.scrollTo(0, 1)
     // this.onLoad()
   },
   mounted () {
@@ -134,7 +135,10 @@ export default {
       const keywords = this.query.cellPhone
 
       this.clearData()
+
       this.query.cellPhone = keywords
+
+      window.scrollTo(0, 1)
       // this.getMyGroupList(this.query)
     },
     input_blur () {

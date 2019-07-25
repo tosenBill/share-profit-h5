@@ -11,8 +11,9 @@
     </header>
     <section>
       <div class="list">
+        <!-- <div class="item-info" @click="item_handle(1)" v-if="userInfo.type == '1' || userInfo.type == '-1'"> -->
         <div class="item-info" @click="item_handle(1)" v-if="userInfo.type == '1' || userInfo.type == '-1'">
-          <span class="label">我的团队</span>
+          <span class="label" style="display:flex;">我的团队 <span>({{userInfo.teamCount || '0'}}人)</span></span>
           <span class="arrow arrow-right"></span>
         </div>
         <div class="item-info" @click="item_handle(2)">
@@ -20,7 +21,12 @@
           <span class="arrow arrow-right"></span>
         </div>
         <div class="item-info" @click="item_handle(3)" v-if="userInfo.type == '1' || userInfo.type == '-1'">
-          <span class="label">添加团队成员</span>
+          <span class="label" style="display:flex;">
+            <span>添加</span>
+            <span v-if="userInfo.type == '-1'">A</span>
+            <span v-else>B</span>
+            <span>级工号</span>
+          </span>
           <span class="arrow arrow-right"></span>
         </div>
         <div class="item-info" @click="item_handle(4)">
@@ -52,6 +58,7 @@ export default {
     ...mapGetters(['userInfo'])
   },
   activated () {
+    console.log('activated invoked')
     this.getUserInfo()
   },
   mounted () {
