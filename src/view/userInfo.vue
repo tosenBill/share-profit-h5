@@ -9,7 +9,7 @@
         </div>
         <div class="form-item">
           <div class="label">联系电话</div>
-          <input type="number" v-model.trim="myUserInfo.cellPhone" placeholder="请输入您的联系电话" @blur="input_blur">
+          <input type="number" v-model.trim="myUserInfo.contactNumber" placeholder="请输入您的联系电话" @blur="input_blur">
         </div>
         <div class="form-item">
           <div class="label">身份证号码</div>
@@ -54,7 +54,7 @@ export default {
     return {
       myUserInfo: {
         name: '',
-        cellPhone: '',
+        contactNumber: '',
         idCard: '',
         bankCard: '',
         openingBank: '',
@@ -96,7 +96,7 @@ export default {
       if (!data.name) {
         this.$toast('请输入您的姓名')
         return 0
-      } else if (!data.cellPhone) {
+      } else if (!data.contactNumber) {
         this.$toast('请输入您的联系电话')
         return 0
       } else if (!data.idCard) {
@@ -117,7 +117,7 @@ export default {
       } else if (data.address.length > 80) {
         this.$toast('收货地址不能大于80个字符')
         return 0
-      } else if (!validateRule.isPhoneNum(data.cellPhone)) {
+      } else if (!validateRule.isPhoneNum(data.contactNumber)) {
         this.$toast('请输入正确的联系号码')
         return 0
       } else if (!validateRule.isIdCard(data.idCard)) {

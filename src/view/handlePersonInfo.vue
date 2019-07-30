@@ -26,21 +26,22 @@
         <div class="drowndown-box">
           <div class="label">办理套餐</div>
           <van-dropdown-menu class="adolf-dropdown-menue">
-            <van-dropdown-item :title="titlePlaceholder" @change="dropdownChange" title-class="wocaonima" v-model="personInfo.setMeal" :options="option1" class="adolf-dropdown-item" />
+            <van-dropdown-item :title="titlePlaceholder" @change="dropdownChange" v-model="personInfo.setMeal" :options="option1" class="adolf-dropdown-item" />
           </van-dropdown-menu>
         </div>
-        <!-- <div class="form-item">
-          <div class="label">套餐档位</div>
-          <input v-model.trim="personInfo.setMeal" type="text" placeholder="请输入办卡人办理套餐档位" @blur="input_blur">
-        </div> -->
         <div class="form-item">
           <div class="label">办卡时间</div>
-          <!-- <span @click="showDateTime = true" class="select-time">{{personInfo.cardTime || ''}}</span> -->
           <input @click="showDateTime = true" readonly="readonly" v-model.trim="personInfo.cardTime" type="text" placeholder="请输入办卡时间" @blur="input_blur">
         </div>
         <div class="form-item">
           <div class="label">收货地址</div>
           <input v-model.trim="personInfo.address" type="text" placeholder="请填写办卡人收货地址" @blur="input_blur">
+        </div>
+        <div class="drowndown-box">
+          <div class="label">权益礼包发放</div>
+          <van-dropdown-menu class="adolf-dropdown-menue">
+            <van-dropdown-item :title="deliveryTypePlaceholder" @change="giftDropdownChange" v-model="personInfo.deliveryType" :options="option2" class="adolf-dropdown-item" />
+          </van-dropdown-menu>
         </div>
         <div class="form-item registerToggle">
           <div class="label">是否注册每选</div>
@@ -86,15 +87,21 @@ export default {
         aliPay: '',
         idCard: '',
         setMeal: '',
+        deliveryType: '',
         cardTime: '',
         isMx: false,
         address: ''
       },
       titlePlaceholder: '请选择办理套餐档位',
+      deliveryTypePlaceholder: '请选择发放方式',
       option1: [
         // { text: '办理套餐档位', value: 0 },
         { text: '108套餐', value: 1 },
         { text: '148套餐', value: 2 }
+      ],
+      option2: [
+        { text: '公司', value: 1 },
+        { text: '合作商', value: 2 }
       ],
       currentDate: new Date(),
       showDateTime: false
@@ -140,8 +147,14 @@ export default {
           this.personInfo.setMeal = item.text
         }
       })
-      // this.personInfo.setMeal = val
-      console.log(this.personInfo.setMeal)
+    },
+    giftDropdownChange (val) {
+      this.option2.forEach(item => {
+        if (val === item.value) {
+          this.deliveryTypePlaceholder = item.text
+          this.personInfo.deliveryType = item.text
+        }
+      })
     },
     validateForm (data) {
       if (!data.name) {
@@ -170,6 +183,9 @@ export default {
         return 0
       } else if (!data.setMeal) {
         this.$toast('请选择办卡人办理套餐档位')
+        return 0
+      } else if (!data.deliveryType) {
+        this.$toast('请选择发放方式')
         return 0
       } else if (!data.cardTime) {
         this.$toast('请选择办卡时间')
@@ -233,16 +249,20 @@ export default {
       aliPay: '',
       idCard: '',
       setMeal: '',
+      deliveryType: '',
       cardTime: '',
       address: '',
       isMx: false
     }
     this.titlePlaceholder = '请选择办理套餐档位'
+    this.deliveryTypePlaceholder = '请选择发放方式'
   }
 }
 </script>
 <style lang="stylus" scoped>
   #handlePersonInfo{
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
     .van-dropdown-menu{
       // border-radius: 10px 10px 0 0;
       margin-bottom: 10px;
@@ -285,7 +305,7 @@ export default {
     footer{
       display flex
       justify-content center
-      margin-top 50px
+      margin 50px 0 30px 0
     }
     .showTime{
       position: fixed;
@@ -295,7 +315,7 @@ export default {
       right: 0;
       width: 100%;
       background: rgba(0,0,0,.6);
-      z-index: 9;
+      z-index: 99;
       .adolf-dateTime-picker{
         position absolute
         width 100%

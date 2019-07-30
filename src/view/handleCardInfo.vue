@@ -38,9 +38,13 @@
         >
           <van-cell>
             <div class="item" v-for="(item, index) in list" :key="index">
-              <span>{{item.name || ''}}</span>
-              <span>{{item.cellPhone || ''}}</span>
-              <!-- <img src="static/images/pass.png" alt=""> -->
+              <div class="list-item-info" :class="{active: item.cellPhone == flag, noActive: item.cellPhone !== flag}" @touchstart="touchS" @touchmove="touchM($event,item)">
+                <div class="name">{{item.name || ''}}</div>
+                <div class="phone">{{item.cellPhone || ''}}</div>
+              </div>
+              <div class="list-swiper-operate-btn">
+                <div class="del" @click="operate_handle('edit', item)">编辑</div>
+              </div>
             </div>
           </van-cell>
         </van-list>
@@ -68,6 +72,9 @@ import { List } from 'vant'
 export default {
   data () {
     return {
+      flag: null,
+      startX: 0,
+      delBtnWidth: 50,
       headerNav: {
         hasAddBtn: true
       },
@@ -125,6 +132,56 @@ export default {
       this.list = []
       this.loading = false
       this.finished = false
+    },
+    async getCardItemInfo (params) {
+      const getCardItemInfo = await this.$http.getCardItemInfo(params).catch(err => console.log(err))
+
+      if (getCardItemInfo && getCardItemInfo.code) {
+        return Promise.resolve(getCardItemInfo.code)
+      }
+    },
+    touchS (e) {
+      if (e.touches.length === 1) {
+        this.startX = e.touches[0].clientX
+      }
+    },
+    touchM (e, item) {
+      if (e.touches.length === 1) {
+        // var index = e.currentTarget.dataset.index
+        // 手指移动时水平方向位置
+        var moveX = e.touches[0].clientX
+        // 手指起始点位置与移动期间的差值
+        var disX = this.startX - moveX
+        var delBtnWidth = this.delBtnWidth
+        // let txtStyle = ''
+        if (disX === 0 || disX < 0) { // 如果移动距离小于等于0，说明向右滑动，文本层位置不变
+          // txtStyle = 'left:0px'
+          this.flag === item.cellPhone && (this.flag = null)
+        } else if (disX > 0) { // 移动距离大于0，文本层left值等于手指移动距离
+          // txtStyle = 'left:-' + disX + 'px'
+          // console.log(txtStyle)
+          if (disX >= delBtnWidth / 2) {
+            // 控制手指移动距离最大值为删除按钮的宽度
+            // txtStyle = 'left:-' + delBtnWidth + 'px'
+            this.flag = item.cellPhone
+          }
+        }
+      }
+    },
+    operate_handle (type, item) {
+      const permission = this.getCardItemInfo({cellPhone: item.cellPhone})
+
+      permission.then((value) => {
+        if (value === '00000-00000') {
+          this.$router.push({
+            path: `/editHandleCardInfo/${item.cellPhone}`
+          })
+        } else if (value === '00001-00004') {
+          this.$toast('您没有权限执行此操作')
+        } else {
+          this.$toast('服务器错误')
+        }
+      })
     },
     add_handle () {
       this.$router.push({
@@ -202,6 +259,8 @@ export default {
   },
   deactivated () {
     this.tabs = []
+    this.flag = null
+    this.startX = 0
   }
 }
 </script>
@@ -261,16 +320,9 @@ export default {
         .item{
           background: #fff;
           height 44px
-          display flex
-          justify-content space-around
-          align-items center
-          font-size:15px;
-          font-family:PingFang-SC-Medium;
-          font-weight:500;
-          color:rgba(51,51,51,1);
-          // margin-bottom 3px
-          padding 0 20px
-          border-bottom 3px solid #EFEFF4
+          position relative
+          margin 0 20px
+          border-bottom 2px solid #EFEFF4
           &:last-child{
             border-bottom none
           }
@@ -283,6 +335,47 @@ export default {
               // flex: inherit;
             }
           }
+          .list-item-info{
+            display flex
+            justify-content space-around
+            align-items center
+            font-size:15px;
+            font-family:PingFang-SC-Medium;
+            font-weight:500;
+            color:rgba(51,51,51,1);
+            height 100%
+            width 100%
+            position absolute;
+            left 0px;
+            z-index:5;
+            background #fff;
+            transition:left 200ms;
+            &.active{
+              left: -44px;
+            }
+          }
+          .list-swiper-operate-btn{
+            position absolute;
+            right:0px;
+            display:flex;
+            height:100%;
+            div{
+              width:44px;
+              font-size:14px;
+              font-family:PingFang-SC-Medium;
+              font-weight:500;
+              height: 100%;
+              color:#fff;
+              display flex;
+              justify-content center;
+              align-items center;
+              &.del{
+                background:#c7c7cc;
+              }
+            }
+          }
+          // margin-bottom 3px
+
         }
       }
     }

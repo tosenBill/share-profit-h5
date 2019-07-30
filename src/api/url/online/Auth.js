@@ -36,5 +36,17 @@ export default {
   // 办卡信息
   handleCardList (data) {
     return this.post(this.ONLINE_ROOT_PATH + '/card/team/page', data)
+  },
+  // 团队列表删除某一个
+  myGroupListDel (data) {
+    return this.post(this.ONLINE_ROOT_PATH + '/user/delete', data)
+  },
+  // 获取办卡item信息
+  getCardItemInfo (data) {
+    return this.post(this.ONLINE_ROOT_PATH + '/card/info', data)
+  },
+  // 编辑办卡人收货地址
+  editHandCardPersonAddress (data) {
+    return this.post(this.ONLINE_ROOT_PATH + '/card/update ', data)
   }
 }

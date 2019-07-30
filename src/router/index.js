@@ -73,6 +73,14 @@ const routes = [
         component: () => import('@/view/handleCardInfo.vue')
       },
       {
+        path: '/editHandleCardInfo/:cellPhone',
+        name: 'editHandleCardInfo',
+        meta: {
+          keepAlive: true // 需要被缓存
+        },
+        component: () => import('@/view/editHandleCardInfo.vue')
+      },
+      {
         path: '/addGroupPerson',
         name: 'addGroupPerson',
         meta: {
