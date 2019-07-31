@@ -11,28 +11,28 @@
           <div class="label">联系电话</div>
           <input v-model="personInfo.contactNumber" type="number" placeholder="请输入办卡人联系电话" @blur="input_blur">
         </div>
-        <div class="form-item">
+        <!-- <div class="form-item">
           <div class="label">身份证号码</div>
           <input v-model.trim="personInfo.idCard" type="text" placeholder="请输入办卡人身份证号码" @blur="input_blur">
         </div>
         <div class="form-item">
           <div class="label">支付宝账号</div>
           <input v-model.trim="personInfo.aliPay" type="text" placeholder="请输入办卡人支付宝账号" @blur="input_blur">
-        </div>
+        </div> -->
         <div class="form-item">
           <div class="label">新入网号码</div>
           <input v-model.trim="personInfo.cellPhone" type="number" placeholder="请输入办卡人所办号码" @blur="input_blur">
         </div>
         <div class="drowndown-box">
           <div class="label">办理套餐</div>
-          <van-dropdown-menu class="adolf-dropdown-menue">
+          <van-dropdown-menu class="adolf-dropdown-menue" :z-index='999'>
             <van-dropdown-item :title="titlePlaceholder" @change="dropdownChange" v-model="personInfo.setMeal" :options="option1" class="adolf-dropdown-item" />
           </van-dropdown-menu>
         </div>
-        <div class="form-item">
+        <!-- <div class="form-item">
           <div class="label">办卡时间</div>
           <input @click="showDateTime = true" readonly="readonly" v-model.trim="personInfo.cardTime" type="text" placeholder="请输入办卡时间" @blur="input_blur">
-        </div>
+        </div> -->
         <div class="form-item">
           <div class="label">收货地址</div>
           <input v-model.trim="personInfo.address" type="text" placeholder="请填写办卡人收货地址" @blur="input_blur">
@@ -43,17 +43,16 @@
             <van-dropdown-item :title="deliveryTypePlaceholder" @change="giftDropdownChange" v-model="personInfo.deliveryType" :options="option2" class="adolf-dropdown-item" />
           </van-dropdown-menu>
         </div>
-        <div class="form-item registerToggle">
+        <!-- <div class="form-item registerToggle">
           <div class="label">是否注册每选</div>
-          <!-- <input type="text" placeholder="请输入办卡人是否注册每选"> -->
           <van-switch v-model="personInfo.isMx" active-color="#07c160"/>
-        </div>
+        </div> -->
       </div>
     </section>
     <footer>
       <div class="operate-btn" @click="complete">完成</div>
     </footer>
-    <div class="showTime" v-if="showDateTime">
+    <!-- <div class="showTime" v-if="showDateTime">
       <van-datetime-picker
         class="adolf-dateTime-picker"
         v-model="currentDate"
@@ -61,17 +60,17 @@
         @confirm="datetime_confirm"
         @cancel="showDateTime = false"
       />
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
 
 import {
   Toast,
-  Switch,
+  // Switch,
   DropdownMenu,
-  DropdownItem,
-  DatetimePicker
+  DropdownItem
+  // DatetimePicker
 } from 'vant'
 
 import validateRule from '@/utils/index'
@@ -84,12 +83,8 @@ export default {
         name: '',
         contactNumber: '',
         cellPhone: '',
-        aliPay: '',
-        idCard: '',
         setMeal: '',
         deliveryType: '',
-        cardTime: '',
-        isMx: false,
         address: ''
       },
       titlePlaceholder: '请选择办理套餐档位',
@@ -110,10 +105,10 @@ export default {
   components: {
     HeaderNav,
     Toast,
-    Switch,
+    // Switch,
     DropdownMenu,
-    DropdownItem,
-    DatetimePicker
+    DropdownItem
+    // DatetimePicker
   },
   computed: {
   },
@@ -166,15 +161,6 @@ export default {
       } else if (!validateRule.isPhoneNum(data.contactNumber)) {
         this.$toast('请输入正确的联系电话')
         return 0
-      } else if (!data.idCard) {
-        this.$toast('请输入办卡人身份证号码')
-        return 0
-      } else if (!validateRule.isIdCard(data.idCard)) {
-        this.$toast('请输入正确的身份证号码')
-        return 0
-      } else if (!data.aliPay) {
-        this.$toast('请输入办卡人支付宝账号')
-        return 0
       } else if (!data.cellPhone) {
         this.$toast('请输入办卡人所办号码')
         return 0
@@ -186,9 +172,6 @@ export default {
         return 0
       } else if (!data.deliveryType) {
         this.$toast('请选择发放方式')
-        return 0
-      } else if (!data.cardTime) {
-        this.$toast('请选择办卡时间')
         return 0
       } else if (!data.address) {
         this.$toast('请输入办卡人收货地址')
@@ -212,7 +195,7 @@ export default {
         const params = {
           ...this.personInfo
         }
-        params.isMx = (!this.personInfo.isMx ? '0' : '1')
+        // params.isMx = (!this.personInfo.isMx ? '0' : '1')
 
         const addCardHandleInfo = await this.$http.addCardHandleInfo(params).catch(err => console.log(err))
         this.loadingToast.clear()
@@ -246,13 +229,10 @@ export default {
       name: '',
       contactNumber: '',
       cellPhone: '',
-      aliPay: '',
-      idCard: '',
       setMeal: '',
       deliveryType: '',
       cardTime: '',
-      address: '',
-      isMx: false
+      address: ''
     }
     this.titlePlaceholder = '请选择办理套餐档位'
     this.deliveryTypePlaceholder = '请选择发放方式'
