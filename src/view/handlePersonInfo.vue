@@ -73,7 +73,7 @@ import {
   // DatetimePicker
 } from 'vant'
 
-import validateRule from '@/utils/index'
+// import validateRule from '@/utils/index'
 import HeaderNav from '@/components/HeaderNav.vue'
 export default {
   data () {
@@ -92,7 +92,7 @@ export default {
       option1: [
         // { text: '办理套餐档位', value: 0 },
         { text: '108套餐', value: 1 },
-        { text: '148套餐', value: 2 }
+        { text: '198套餐', value: 2 }
       ],
       option2: [
         { text: '公司', value: 1 },
@@ -152,23 +152,28 @@ export default {
       })
     },
     validateForm (data) {
+      const reg = /^[1][3,4,5,7,8,9][0-9]{9}$/
+
       if (!data.name) {
         this.$toast('请输入办卡人姓名')
         return 0
       } else if (!data.contactNumber) {
         this.$toast('请输入办卡人联系电话')
         return 0
-      } else if (!validateRule.isPhoneNum(data.contactNumber)) {
+      } else if (!reg.test(data.contactNumber)) {
         this.$toast('请输入正确的联系电话')
         return 0
       } else if (!data.cellPhone) {
         this.$toast('请输入办卡人所办号码')
         return 0
-      } else if (!validateRule.isPhoneNum(data.cellPhone)) {
+      } else if (!reg.test(data.cellPhone)) {
         this.$toast('请输入正确的所办号码')
         return 0
       } else if (!data.setMeal) {
         this.$toast('请选择办卡人办理套餐档位')
+        return 0
+      } else if (!data.address) {
+        this.$toast('请输入办卡人收货地址')
         return 0
       } else if (!data.deliveryType) {
         this.$toast('请选择发放方式')

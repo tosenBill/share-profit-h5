@@ -4,6 +4,17 @@
       <!-- <div slot="addBtn"></div> -->
     </header-nav>
     <header>
+      <div class="tabs">
+        <div
+          class="tab"
+          :class="{'active': query.type == index && userInfo.type != 2}"
+          v-for="(tab, index) in tabs"
+          :key="index"
+          @click="tab_index_handle(index)"
+        >
+          <span>{{tab.name || ''}}</span>
+        </div>
+      </div>
       <form action="" onsubmit="return false;" @submit.prevent >
         <input
           v-model.trim="query.cellPhone"
@@ -38,19 +49,12 @@
             </div>
           </van-cell>
         </van-list>
-        <!-- <div class="item" v-for="item in list" :key="item" :title="item">
-          <div class="name">石荣成</div>
-          <div class="phone">15753033195</div>
-        </div>
-        <div class="item">
-          <div class="name">沈小童</div>
-          <div class="phone">15753033195</div>
-        </div> -->
       </div>
     </section>
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 import HeaderNav from '@/components/HeaderNav.vue'
 import { List } from 'vant'
 
@@ -64,11 +68,12 @@ export default {
         hasAddBtn: true
       },
       keywords: '',
+      tabs: [],
       query: {
         pageNom: 1,
         size: 20,
         cellPhone: '',
-        key: ''
+        type: 0
       },
       list: [],
       loading: false,
@@ -80,10 +85,25 @@ export default {
     List
   },
   computed: {
+    ...mapGetters(['userInfo'])
   },
   activated () {
-    // this.getMyGroupList(this.query)
     this.clearData()
+
+    const type = this.userInfo.type
+    console.log(type)
+    if (type === 1 || type === -1) {
+      this.tabs.push({
+        name: '我的团队'
+      },
+      {
+        name: '间接团队'
+      })
+    } else {
+      this.tabs.push({
+        name: '我的团队'
+      })
+    }
 
     window.scrollTo(0, 1)
     // this.onLoad()
@@ -97,7 +117,8 @@ export default {
       this.query = {
         pageNom: 1,
         size: 20,
-        cellPhone: ''
+        cellPhone: '',
+        type: 0
       }
       this.list = []
       this.loading = false
@@ -147,9 +168,30 @@ export default {
           }
         })
     },
+    tab_index_handle (type) {
+      this.query.type = type
+      this.flag = null
+      this.loading = false
+      this.finished = false
+      this.list = []
+
+      this.query = {
+        pageNom: 1,
+        size: 20,
+        cellPhone: '',
+        type: type
+      }
+      window.scrollTo(0, 1)
+      // this.onLoad()
+    },
     onLoad (index) {
       console.log('触底刷新 is invoked, index:', index)
-      this.getMyGroupList(this.query)
+
+      const type = (this.query.type === 1 ? 0 : 1)
+      this.getMyGroupList({
+        ...this.query,
+        type
+      })
     },
     async getMyGroupList (params) {
       const getMyGroupList = await this.$http.myGroupList(params).catch(err => console.log(err))
@@ -200,6 +242,7 @@ export default {
   },
   deactivated () {
     console.log('deactiveted')
+    this.tabs = []
   }
 }
 </script>
@@ -209,8 +252,37 @@ export default {
       border-bottom: none;
     }
     header{
-      height 44px
+      // height 44px
       padding: 5px 10px;
+      .tabs{
+        height 44px
+        display flex
+        margin-bottom: 10px;
+        .tab{
+          flex: 1
+          display flex
+          justify-content center
+          align-items center
+          font-size:18px;
+          font-family:PingFangSC-Medium;
+          font-weight:500;
+          color:rgba(102,102,102,1);
+          position relative
+          &.active{
+            color #333
+            span:before{
+              content: '';
+              position: absolute;
+              width: 0.8rem;
+              height: 0.05333rem;
+              bottom: 0;
+              left: 50%;
+              background: #333;
+              transform: translateX(-50%);
+            }
+          }
+        }
+      }
       input{
         width 100%
         padding: 12px 0;

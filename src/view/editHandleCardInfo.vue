@@ -11,26 +11,26 @@
           <div class="label">联系电话</div>
           <input readonly="readonly" v-model="personInfo.contactNumber" type="number" placeholder="请输入办卡人联系电话" @blur="input_blur">
         </div>
-        <div class="form-item">
+        <!-- <div class="form-item">
           <div class="label">身份证号码</div>
           <input readonly="readonly" v-model.trim="personInfo.idCard" type="text" placeholder="请输入办卡人身份证号码" @blur="input_blur">
         </div>
         <div class="form-item">
           <div class="label">支付宝账号</div>
           <input readonly="readonly" v-model.trim="personInfo.aliPay" type="text" placeholder="请输入办卡人支付宝账号" @blur="input_blur">
-        </div>
+        </div> -->
         <div class="form-item">
           <div class="label">新入网号码</div>
           <input readonly="readonly" v-model.trim="personInfo.cellPhone" type="number" placeholder="请输入办卡人所办号码" @blur="input_blur">
         </div>
         <div class="form-item">
           <div class="label">办理套餐</div>
-          <input readonly="readonly" v-model.trim="personInfo.setMeal" type="number" placeholder="办理套餐" @blur="input_blur">
+          <input readonly="readonly" v-model.trim="personInfo.setMeal" type="text" placeholder="办理套餐" @blur="input_blur">
         </div>
-        <div class="form-item">
+        <!-- <div class="form-item">
           <div class="label">办卡时间</div>
           <input readonly="readonly" v-model.trim="personInfo.cardTime" type="text" placeholder="请输入办卡时间" @blur="input_blur">
-        </div>
+        </div> -->
         <div class="form-item">
           <div class="label">收货地址</div>
           <input style="color:#333;" v-model.trim="personInfo.address" type="text" placeholder="请填写办卡人收货地址" @blur="input_blur">
@@ -39,10 +39,10 @@
           <div class="label">权益礼包发放</div>
           <input readonly="readonly" v-model.trim="personInfo.deliveryType" type="text" placeholder="权益礼包发放" @blur="input_blur">
         </div>
-        <div class="form-item registerToggle">
+        <!-- <div class="form-item registerToggle">
           <div class="label">是否注册每选</div>
           <van-switch disabled v-model="personInfo.isMx" active-color="#07c160"/>
-        </div>
+        </div> -->
       </div>
     </section>
     <footer>
@@ -103,6 +103,8 @@ export default {
         }
 
         this.personInfo.isMx = !!this.personInfo.isMx
+
+        console.log(this.personInfo)
       } else if (getCardItemInfo && getCardItemInfo.code === '00001-00004') {
         this.$toast('您没有权限执行此操作')
       } else {

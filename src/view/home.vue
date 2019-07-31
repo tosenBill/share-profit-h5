@@ -12,7 +12,7 @@
     <section>
       <div class="list">
         <!-- <div class="item-info" @click="item_handle(1)" v-if="userInfo.type == '1' || userInfo.type == '-1'"> -->
-        <div class="item-info" @click="item_handle(1)" v-if="userInfo.type == '1' || userInfo.type == '-1'">
+        <div class="item-info" @click="item_handle(1)">
           <span class="label" style="display:flex;">我的团队 <span>({{userInfo.teamCount || '0'}}人)</span></span>
           <span class="arrow arrow-right"></span>
         </div>
