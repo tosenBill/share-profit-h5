@@ -95,8 +95,8 @@ export default {
         { text: '198套餐', value: 2 }
       ],
       option2: [
-        { text: '公司', value: 1 },
-        { text: '合作商', value: 2 }
+        { text: '总部发放', value: 1 },
+        { text: '推广人自行发放', value: 2 }
       ],
       currentDate: new Date(),
       showDateTime: false
