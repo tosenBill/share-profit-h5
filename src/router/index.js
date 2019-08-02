@@ -81,6 +81,14 @@ const routes = [
         component: () => import('@/view/editHandleCardInfo.vue')
       },
       {
+        path: '/qrcode',
+        name: 'qrcode',
+        meta: {
+          keepAlive: true // 需要被缓存
+        },
+        component: () => import('@/view/qrcode.vue')
+      },
+      {
         path: '/addGroupPerson',
         name: 'addGroupPerson',
         meta: {

@@ -48,5 +48,9 @@ export default {
   // 编辑办卡人收货地址
   editHandCardPersonAddress (data) {
     return this.post(this.ONLINE_ROOT_PATH + '/card/update ', data)
+  },
+  // 获取我的二维码信息
+  getMyQrcodeInfo (data) {
+    return this.post(this.ONLINE_ROOT_PATH + '/user/qrcode ', data)
   }
 }

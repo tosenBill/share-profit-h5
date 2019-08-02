@@ -33,6 +33,11 @@
           <span class="label">添加办卡人信息</span>
           <span class="arrow arrow-right"></span>
         </div>
+        <div class="item-info" @click="item_handle(5)">
+          <span class="label">批量添加办卡人信息</span>
+          <span class="arrow arrow-right"></span>
+        </div>
+        <!-- <p>联系电话：<a :href="'tel:' + userInfo.cellPhone">{{userInfo.cellPhone || ''}}</a></p> -->
       </div>
     </section>
   </div>
@@ -95,6 +100,10 @@ export default {
           break
         case 4:
           path = '/handlePersonInfo'
+          break
+        case 5:
+          path = '/qrcode'
+          break
       }
 
       this.$router.push({path})

@@ -1,6 +1,7 @@
 <template>
   <div class="userInfo fixed-bg" id="handlePersonInfo">
-    <header-nav/>
+    <header-nav v-if="!queryId"/>
+    <header-title :headerTitle="headerTitle" v-else/>
     <section class="padding-10">
       <div class="form-list">
         <div class="form-item">
@@ -74,6 +75,7 @@ import {
 } from 'vant'
 
 // import validateRule from '@/utils/index'
+import HeaderTitle from '@/components/HeaderTitle.vue'
 import HeaderNav from '@/components/HeaderNav.vue'
 export default {
   data () {
@@ -99,10 +101,13 @@ export default {
         { text: '推广人自行发放', value: 2 }
       ],
       currentDate: new Date(),
-      showDateTime: false
+      showDateTime: false,
+      headerTitle: { title: '添加办卡人信息' },
+      queryId: ''
     }
   },
   components: {
+    HeaderTitle,
     HeaderNav,
     Toast,
     // Switch,
@@ -114,6 +119,14 @@ export default {
   },
   mounted () {
 
+  },
+  activated () {
+    const query = this.$route.query
+    alert(query.id)
+
+    if (query.id) {
+      this.queryId = query.id
+    }
   },
   methods: {
     formatGMT (gmt, long) {
