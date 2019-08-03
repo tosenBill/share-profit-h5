@@ -51,6 +51,14 @@ export default {
   },
   // 获取我的二维码信息
   getMyQrcodeInfo (data) {
-    return this.post(this.ONLINE_ROOT_PATH + '/user/qrcode ', data)
+    return this.post(this.ONLINE_ROOT_PATH + '/user/get/img', data)
+  },
+  // 获取团队数量
+  getGroupCount (data) {
+    return this.post(this.ONLINE_ROOT_PATH + '/user/team/count', data)
+  },
+  // 获取办卡信息数量
+  getCardCount (data) {
+    return this.post(this.ONLINE_ROOT_PATH + '/card/team/count', data)
   }
 }

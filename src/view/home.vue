@@ -11,13 +11,12 @@
     </header>
     <section>
       <div class="list">
-        <!-- <div class="item-info" @click="item_handle(1)" v-if="userInfo.type == '1' || userInfo.type == '-1'"> -->
-        <div class="item-info" @click="item_handle(1)">
-          <span class="label" style="display:flex;">我的团队 <span>({{userInfo.teamCount || '0'}}人)</span></span>
+        <div class="item-info" @click="item_handle(4)">
+          <span class="label">添加办卡人信息</span>
           <span class="arrow arrow-right"></span>
         </div>
-        <div class="item-info" @click="item_handle(2)">
-          <span class="label">办卡信息</span>
+        <div class="item-info" @click="item_handle(5)">
+          <span class="label">批量添加办卡人信息</span>
           <span class="arrow arrow-right"></span>
         </div>
         <div class="item-info" @click="item_handle(3)" v-if="userInfo.type == '1' || userInfo.type == '-1'">
@@ -29,12 +28,13 @@
           </span>
           <span class="arrow arrow-right"></span>
         </div>
-        <div class="item-info" @click="item_handle(4)">
-          <span class="label">添加办卡人信息</span>
+        <div class="item-info" @click="item_handle(2)">
+          <span class="label">查看办卡信息<span>({{cardCount || '0'}}人)</span></span>
           <span class="arrow arrow-right"></span>
         </div>
-        <div class="item-info" @click="item_handle(5)">
-          <span class="label">批量添加办卡人信息</span>
+        <!-- <div class="item-info" @click="item_handle(1)" v-if="userInfo.type == '1' || userInfo.type == '-1'"> -->
+        <div class="item-info" @click="item_handle(1)">
+          <span class="label" style="display:flex;">团队成员 <span>({{groupCount || '0'}}人)</span></span>
           <span class="arrow arrow-right"></span>
         </div>
         <!-- <p>联系电话：<a :href="'tel:' + userInfo.cellPhone">{{userInfo.cellPhone || ''}}</a></p> -->
@@ -53,7 +53,8 @@ import {
 export default {
   data () {
     return {
-      copyData: 'copy data'
+      groupCount: '',
+      cardCount: ''
     }
   },
   components: {
@@ -64,7 +65,12 @@ export default {
   },
   activated () {
     console.log('activated invoked')
+    const token = sessionStorage.getItem('token')
+
     this.getUserInfo()
+
+    token && this.getGroupCount({ token })
+    token && this.getCardCount({ token })
   },
   mounted () {
 
@@ -79,6 +85,33 @@ export default {
         console.log(this.userInfo)
       } else {
         this.$toast('请输入旧密码')
+      }
+    },
+    async getGroupCount (params) {
+      const getGroupCount = await this.$http.getGroupCount(params).catch(err => console.log(err))
+
+      if (getGroupCount && getGroupCount.code === '00000-00000') {
+        // return Promise.resolve(getGroupCount.data)
+        // A（1）:直推间推相加、B/管理员（-1）只需取直推
+        if (this.userInfo.type === 1) {
+          this.groupCount = Number(getGroupCount.data.directCount) + Number(getGroupCount.data.indirectCount)
+        } else {
+          this.groupCount = Number(getGroupCount.data.directCount)
+        }
+      }
+    },
+    async getCardCount (params) {
+      const getCardCount = await this.$http.getCardCount(params).catch(err => console.log(err))
+
+      if (getCardCount && getCardCount.code === '00000-00000') {
+        console.log(getCardCount)
+        // A（1）:直推间推相加、B/管理员（-1）只需取直推
+        if (this.userInfo.type === 1) {
+          this.cardCount = Number(getCardCount.data.directCount) + Number(getCardCount.data.indirectCount)
+        } else {
+          this.cardCount = Number(getCardCount.data.directCount)
+        }
+        // this.cardCount = Number(getCardCount.data.directCount) + Number(getCardCount.data.indirectCount)
       }
     },
     go_loginout () {

@@ -77,7 +77,9 @@ export default {
       },
       list: [],
       loading: false,
-      finished: false
+      finished: false,
+      directCount: '',
+      indirectCount: ''
     }
   },
   components: {
@@ -92,17 +94,26 @@ export default {
 
     const type = this.userInfo.type
     console.log(type)
-    if (type === 1 || type === -1) {
-      this.tabs.push({
-        name: '我的团队'
-      },
-      {
-        name: '间接团队'
+    if (type === 1) {
+      const token = sessionStorage.getItem('token')
+
+      const permiseGroupCount = this.getGroupCount({ token })
+      permiseGroupCount.then(val => {
+        // console.log(val)
+        this.directCount = val.directCount || ''
+        this.indirectCount = val.indirectCount || ''
+
+        this.tabs.push({
+          name: '直推团队(' + this.directCount + ')'
+        },
+        {
+          name: '间接团队(' + this.indirectCount + ')'
+        })
       })
     } else {
-      this.tabs.push({
-        name: '我的团队'
-      })
+      // this.tabs.push({
+      //   name: '我的团队'
+      // })
     }
 
     window.scrollTo(0, 1)
@@ -112,6 +123,92 @@ export default {
 
   },
   methods: {
+    operate_handle (type, item) {
+      console.log(item)
+      // 掉接口 myGroupListDel
+      this.$http.myGroupListDel({ cellPhone: item.cellPhone }).catch(err => console.log(err))
+        .then(res => {
+          console.log(res)
+          if (res.code === '00000-0000') {
+            this.$toast('删除成功')
+          } else if (res.code === '00001-00004') {
+            this.$toast('您没有权限执行此操作')
+          } else {
+            this.$toast(res.errMsg)
+          }
+        })
+    },
+    tab_index_handle (type) {
+      this.query.type = type
+      this.flag = null
+      this.loading = false
+      this.finished = false
+      this.list = []
+
+      this.query = {
+        pageNom: 1,
+        size: 20,
+        cellPhone: '',
+        type: type
+      }
+      window.scrollTo(0, 1)
+      // this.onLoad()
+    },
+    onLoad (index) {
+      console.log('触底刷新 is invoked, index:', index)
+
+      const type = (this.query.type === 1 ? 0 : 1)
+      this.getMyGroupList({
+        ...this.query,
+        type
+      })
+    },
+    async getGroupCount (params) {
+      const getGroupCount = await this.$http.getGroupCount(params).catch(err => console.log(err))
+
+      if (getGroupCount && getGroupCount.code === '00000-00000') {
+        return Promise.resolve(getGroupCount.data)
+      }
+    },
+    async getMyGroupList (params) {
+      const getMyGroupList = await this.$http.myGroupList(params).catch(err => console.log(err))
+
+      this.loading = false
+      if (getMyGroupList && getMyGroupList.code === '00000-00000') {
+        const _data = getMyGroupList.data
+        this.list.push(
+          ..._data.records
+        )
+
+        if (_data.lastPage) {
+          this.finished = true
+        }
+
+        !this.finished && this.query.pageNom++
+
+        console.log(_data.lastPage)
+      //
+      } else {
+        this.$toast(getMyGroupList.errMsg)
+      }
+    },
+    add_handle () {
+      this.$router.push({
+        path: `/addGroupPerson`
+      })
+    },
+    search_handle () {
+      event.preventDefault() // 默认是换行
+      this.$refs.search_input.blur()
+      const keywords = this.query.cellPhone
+
+      this.clearData()
+
+      this.query.cellPhone = keywords
+
+      window.scrollTo(0, 1)
+      // this.getMyGroupList(this.query)
+    },
     clearData () {
       this.flag = null
       this.query = {
@@ -153,85 +250,6 @@ export default {
         }
       }
     },
-    operate_handle (type, item) {
-      console.log(item)
-      // 掉接口 myGroupListDel
-      this.$http.myGroupListDel({ cellPhone: item.cellPhone }).catch(err => console.log(err))
-        .then(res => {
-          console.log(res)
-          if (res.code === '00000-0000') {
-            this.$toast('删除成功')
-          } else if (res.code === '00001-00004') {
-            this.$toast('您没有权限执行此操作')
-          } else {
-            this.$toast(res.errMsg)
-          }
-        })
-    },
-    tab_index_handle (type) {
-      this.query.type = type
-      this.flag = null
-      this.loading = false
-      this.finished = false
-      this.list = []
-
-      this.query = {
-        pageNom: 1,
-        size: 20,
-        cellPhone: '',
-        type: type
-      }
-      window.scrollTo(0, 1)
-      // this.onLoad()
-    },
-    onLoad (index) {
-      console.log('触底刷新 is invoked, index:', index)
-
-      const type = (this.query.type === 1 ? 0 : 1)
-      this.getMyGroupList({
-        ...this.query,
-        type
-      })
-    },
-    async getMyGroupList (params) {
-      const getMyGroupList = await this.$http.myGroupList(params).catch(err => console.log(err))
-
-      this.loading = false
-      if (getMyGroupList && getMyGroupList.code === '00000-00000') {
-        const _data = getMyGroupList.data
-        this.list.push(
-          ..._data.records
-        )
-
-        if (_data.lastPage) {
-          this.finished = true
-        }
-
-        !this.finished && this.query.pageNom++
-
-        console.log(_data.lastPage)
-      //
-      } else {
-        this.$toast(getMyGroupList.errMsg)
-      }
-    },
-    add_handle () {
-      this.$router.push({
-        path: `/addGroupPerson`
-      })
-    },
-    search_handle () {
-      event.preventDefault() // 默认是换行
-      this.$refs.search_input.blur()
-      const keywords = this.query.cellPhone
-
-      this.clearData()
-
-      this.query.cellPhone = keywords
-
-      window.scrollTo(0, 1)
-      // this.getMyGroupList(this.query)
-    },
     input_blur () {
       // document.body.scrollTop = document.documentElement.scrollTop - 1
       setTimeout(() => {
@@ -255,10 +273,10 @@ export default {
       // height 44px
       padding: 5px 10px;
       .tabs{
-        height 44px
         display flex
         margin-bottom: 10px;
         .tab{
+          height 44px
           flex: 1
           display flex
           justify-content center

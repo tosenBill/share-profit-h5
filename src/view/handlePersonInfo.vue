@@ -122,10 +122,9 @@ export default {
   },
   activated () {
     const query = this.$route.query
-    alert(query.id)
 
-    if (query.id) {
-      this.queryId = query.id
+    if (query.parentId) {
+      this.queryId = query.parentId
     }
   },
   methods: {
@@ -213,6 +212,7 @@ export default {
         const params = {
           ...this.personInfo
         }
+        this.queryId && (params.parentId = this.queryId)
         // params.isMx = (!this.personInfo.isMx ? '0' : '1')
 
         const addCardHandleInfo = await this.$http.addCardHandleInfo(params).catch(err => console.log(err))
@@ -224,9 +224,11 @@ export default {
             message: '添加成功',
             duration: 1000
           })
-          setTimeout(() => {
-            this.$go_back()
-          }, 1000)
+          if (!this.queryId) {
+            setTimeout(() => {
+              this.$go_back()
+            }, 1000)
+          }
         } else {
           this.$toast(addCardHandleInfo.errMsg)
         }

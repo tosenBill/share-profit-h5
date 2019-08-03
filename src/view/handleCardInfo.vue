@@ -6,7 +6,7 @@
       <div class="tabs">
         <div
           class="tab"
-          :class="{'active': query.type == index && userInfo.type != 2}"
+          :class="{'active': query.type == index && userInfo.type == 1}"
           v-for="(tab, index) in tabs"
           :key="index"
           @click="tab_index_handle(index)"
@@ -87,7 +87,9 @@ export default {
       },
       list: [],
       loading: false,
-      finished: false
+      finished: false,
+      directCount: '',
+      indirectCount: ''
     }
   },
   components: {
@@ -104,22 +106,25 @@ export default {
     window.scrollTo(0, 1)
     const type = this.userInfo.type
     console.log(type)
-    if (type === 2) {
-      this.tabs.push({
-        name: '我的办卡信息'
-      })
-    } else {
-      this.tabs.push({
-        name: '我的办卡信息'
-      },
-      {
-        name: '其他人办卡信息'
-      })
-    }
+    const token = sessionStorage.getItem('token')
+    const permiseCardCount = this.getCardCount({ token })
+    permiseCardCount.then(val => {
+      this.directCount = val.directCount || '0'
+      this.indirectCount = val.indirectCount || '0'
 
-    if (this.loading) {
-      // this.onLoad()
-    }
+      if (type === 1) {
+        this.tabs.push({
+          name: '我的办卡信息(' + this.directCount + ')'
+        },
+        {
+          name: '其他人办卡信息(' + this.indirectCount + ')'
+        })
+      } else {
+        this.tabs.push({
+          name: '我的办卡信息(' + this.directCount + ')'
+        })
+      }
+    })
   },
   methods: {
     clearData () {
@@ -132,6 +137,13 @@ export default {
       this.list = []
       this.loading = false
       this.finished = false
+    },
+    async getCardCount (params) {
+      const getCardCount = await this.$http.getCardCount(params).catch(err => console.log(err))
+
+      if (getCardCount && getCardCount.code === '00000-00000') {
+        return Promise.resolve(getCardCount.data)
+      }
     },
     async getCardItemInfo (params) {
       const getCardItemInfo = await this.$http.getCardItemInfo(params).catch(err => console.log(err))

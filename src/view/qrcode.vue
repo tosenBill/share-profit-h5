@@ -2,12 +2,15 @@
   <div class="qrcode fixed-bg" id="qrcode">
     <header-nav/>
     <section>
+      <p class="tip tip-qrcode">您可截屏保存二维码分享给办卡人</p>
+      <p class="tip tip-qrcode">由办卡人填写信息</p>
       <div class="qrcode-img">
-        <img src="static/images/test-qrcode.png" alt="">
+        <img :src="codeImgPath" alt="">
       </div>
-      <p class="tip">您可以复制二维码链接在浏览器打开</p>
+      <p class="tip huoze">或者</p>
+      <p class="tip">您也可以复制链接发送给办卡人，由办卡人填写信息</p>
       <div class="copy">
-        <div class="url-link">http://172.20.10.4:8080/#/handlePersonInfo?id=123456</div>
+        <!-- <p class="url-link">{{copyData || ''}}</p> -->
         <div class="copy-btn" data-clipboard-action="copy" :data-clipboard-text="copyData" @click="copy_link">复制链接</div>
       </div>
     </section>
@@ -25,7 +28,8 @@ import {
 export default {
   data () {
     return {
-      copyData: 'http://172.20.10.4:8080/#/handlePersonInfo?id=123456'
+      codeImgPath: '',
+      copyData: ''
     }
   },
   components: {
@@ -47,7 +51,9 @@ export default {
       const getMyQrcodeInfo = await this.$http.getMyQrcodeInfo(params).catch(err => console.log(err))
 
       if (getMyQrcodeInfo && getMyQrcodeInfo.code === '00000-00000') {
-
+        console.log(getMyQrcodeInfo.data)
+        this.codeImgPath = getMyQrcodeInfo.data.codeImgPath || ''
+        this.copyData = getMyQrcodeInfo.data.url
       }
     },
     copy_link () {
@@ -69,8 +75,13 @@ export default {
       max-width 500px
       padding 20px 25px;
       margin: 0 auto;
+      .tip-qrcode{
+        margin-bottom: 10px;
+      }
       .qrcode-img{
-        // height calc(100vw - 50px);
+        min-height 320px
+        height calc(100vw - 50px);
+        background #D8D8D8
         >img{
           width 100%;
           vertical-align: middle;
@@ -83,9 +94,14 @@ export default {
         color:rgba(51,51,51,1);
         line-height: 20px;
         margin: 10px 0;
+        &.huoze{
+          margin-top 20px
+        }
       }
       .copy{
         display: flex;
+        justify-content center
+        margin-top 20px
         .url-link{
           flex 1;
           height:44px;
