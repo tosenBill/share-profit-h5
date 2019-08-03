@@ -6,7 +6,7 @@
       <div class="tabs">
         <div
           class="tab"
-          :class="{'active': query.type == index && userInfo.type == 1}"
+          :class="{'active': query.type == index && userInfo.type != -1}"
           v-for="(tab, index) in tabs"
           :key="index"
           @click="tab_index_handle(index)"
@@ -111,17 +111,17 @@ export default {
     permiseCardCount.then(val => {
       this.directCount = val.directCount || '0'
       this.indirectCount = val.indirectCount || '0'
-
-      if (type === 1) {
+      // if (type === -1)
+      if (type === 1 || type === 2) {
         this.tabs.push({
-          name: '我的办卡信息(' + this.directCount + ')'
+          name: '直推办卡信息(' + this.directCount + ')'
         },
         {
-          name: '其他人办卡信息(' + this.indirectCount + ')'
+          name: '团队办卡信息(' + this.indirectCount + ')'
         })
       } else {
         this.tabs.push({
-          name: '我的办卡信息(' + this.directCount + ')'
+          name: '直推办卡信息(' + this.directCount + ')'
         })
       }
     })

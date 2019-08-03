@@ -104,10 +104,10 @@ export default {
         this.indirectCount = val.indirectCount || ''
 
         this.tabs.push({
-          name: '直推团队(' + this.directCount + ')'
+          name: '直推工号(' + this.directCount + ')'
         },
         {
-          name: '间接团队(' + this.indirectCount + ')'
+          name: '间推工号(' + this.indirectCount + ')'
         })
       })
     } else {

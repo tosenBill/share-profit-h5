@@ -12,31 +12,31 @@
     <section>
       <div class="list">
         <div class="item-info" @click="item_handle(4)">
-          <span class="label">添加办卡人信息</span>
+          <span class="label">手动添加直推办卡人</span>
           <span class="arrow arrow-right"></span>
         </div>
         <div class="item-info" @click="item_handle(5)">
-          <span class="label">批量添加办卡人信息</span>
-          <span class="arrow arrow-right"></span>
-        </div>
-        <div class="item-info" @click="item_handle(3)" v-if="userInfo.type == '1' || userInfo.type == '-1'">
-          <span class="label" style="display:flex;">
-            <span>添加</span>
-            <span v-if="userInfo.type == '-1'">A</span>
-            <span v-else>B</span>
-            <span>级工号</span>
-          </span>
+          <span class="label">扫码添加直推办卡人</span>
           <span class="arrow arrow-right"></span>
         </div>
         <div class="item-info" @click="item_handle(2)">
           <span class="label">查看办卡信息<span>({{cardCount || '0'}}人)</span></span>
           <span class="arrow arrow-right"></span>
         </div>
-        <!-- <div class="item-info" @click="item_handle(1)" v-if="userInfo.type == '1' || userInfo.type == '-1'"> -->
-        <div class="item-info" @click="item_handle(1)">
-          <span class="label" style="display:flex;">团队成员 <span>({{groupCount || '0'}}人)</span></span>
+        <div class="item-info" @click="item_handle(3)" v-if="userInfo.type == '1' || userInfo.type == '-1'">
+          <span class="label" style="display:flex;">
+            <span>开通</span>
+            <span v-if="userInfo.type == '-1'">A</span>
+            <span v-else>B</span>
+            <span>级工号</span>
+          </span>
           <span class="arrow arrow-right"></span>
         </div>
+        <div class="item-info" @click="item_handle(1)">
+          <span class="label" style="display:flex;">查看工号 <span>({{groupCount || '0'}}人)</span></span>
+          <span class="arrow arrow-right"></span>
+        </div>
+        <!-- <div class="item-info" @click="item_handle(1)" v-if="userInfo.type == '1' || userInfo.type == '-1'"> -->
         <!-- <p>联系电话：<a :href="'tel:' + userInfo.cellPhone">{{userInfo.cellPhone || ''}}</a></p> -->
       </div>
     </section>
@@ -154,7 +154,7 @@ export default {
     background:rgba(239,239,244,1);
     padding 10px
     header{
-      width 355px
+      // width 355px
       min-height 88px
       background:rgba(255,255,255,1);
       box-shadow:0px 2px 5px 0px rgba(231,231,231,1);
