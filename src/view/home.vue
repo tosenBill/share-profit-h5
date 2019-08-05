@@ -84,7 +84,7 @@ export default {
         this.$store.commit(types.SET_USER_INFO, userInfo.data)
         console.log(this.userInfo)
       } else {
-        this.$toast('请输入旧密码')
+        this.$toast(userInfo.errMsg)
       }
     },
     async getGroupCount (params) {

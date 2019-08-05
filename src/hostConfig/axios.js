@@ -39,47 +39,52 @@ axios.interceptors.response.use(
     // let _data = res.data
     // console.log(_data)
     if (res.status === 200) {
-      // console.log('res', res)
-      // console.log('_data', _data)
-      // if (res.code !== '0000-0000') {
-      //   window._Vue.$toast({
-      //     message: _data.errMsg,
-      //     duration: 3000
-      //   })
-      // }
-      // console.log(_data.code)
-      /*
-      if (Object.prototype.toString.call(_data).slice(8, -1) === 'Object') {
-        if (_data.code !== '0000-0000') {
+      console.log('res', res.data.code)
+      if (res.data.code === '00001-00000') { // 用户未登录
+        window._Vue.$router.replace({ path: '/' })
+      }
+    }
+    return res
+    // console.log('res', res)
+    // console.log('_data', _data)
+    // if (res.code !== '0000-0000') {
+    //   window._Vue.$toast({
+    //     message: _data.errMsg,
+    //     duration: 3000
+    //   })
+    // }
+    // console.log(_data.code)
+    /*
+    if (Object.prototype.toString.call(_data).slice(8, -1) === 'Object') {
+      if (_data.code !== '0000-0000') {
+        window._Vue.$notify({
+          message: _data.errMsg,
+          duration: 1000,
+          background: '#ff4444'
+        })
+      }
+      switch (_data.code) {
+        case 1001:
+          // window._Vue.$store.dispatch("loginOut")
           window._Vue.$notify({
-            message: _data.errMsg,
+            message: _data.message,
             duration: 1000,
             background: '#ff4444'
           })
-        }
-        switch (_data.code) {
-          case 1001:
-            // window._Vue.$store.dispatch("loginOut")
-            window._Vue.$notify({
-              message: _data.message,
-              duration: 1000,
-              background: '#ff4444'
-            })
-            break
-          case 1002: {
-            window._Vue.$notify({
-              message: _data.message,
-              duration: 1000,
-              background: '#ff4444'
-            })
-            _data = null
-            break
-          }
+          break
+        case 1002: {
+          window._Vue.$notify({
+            message: _data.message,
+            duration: 1000,
+            background: '#ff4444'
+          })
+          _data = null
+          break
         }
       }
-      */
     }
-    return res
+    */
+  // }
   },
   err => {
     switch (err.response.status) {
