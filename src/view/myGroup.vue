@@ -95,7 +95,7 @@ export default {
     const type = this.userInfo.type
     console.log(type)
     if (type === 1) {
-      const token = sessionStorage.getItem('token')
+      const token = localStorage.getItem('token')
 
       const permiseGroupCount = this.getGroupCount({ token })
       permiseGroupCount.then(val => {
@@ -239,7 +239,7 @@ export default {
         if (disX === 0 || disX < 0) { // 如果移动距离小于等于0，说明向右滑动，文本层位置不变
           // txtStyle = 'left:0px'
           this.flag === item.cellPhone && (this.flag = null)
-        } else if (disX > 0) { // 移动距离大于0，文本层left值等于手指移动距离
+        } else if (disX > 50) { // 移动距离大于0，文本层left值等于手指移动距离
           // txtStyle = 'left:-' + disX + 'px'
           // console.log(txtStyle)
           if (disX >= delBtnWidth / 2) {

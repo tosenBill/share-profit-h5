@@ -53,8 +53,8 @@
 <script>
 
 import {
-  Toast,
-  Switch
+  Toast
+  // Switch
 } from 'vant'
 
 // import validateRule from '@/utils/index'
@@ -79,8 +79,8 @@ export default {
   },
   components: {
     HeaderNav,
-    Toast,
-    Switch
+    Toast
+    // Switch
   },
   computed: {
   },

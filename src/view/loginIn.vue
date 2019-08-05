@@ -234,13 +234,13 @@ export default {
           password: this.loginForm.password
         }
         // console.log(params)
-        // sessionStorage.setItem('token', 'fhlafhpdafhpda111')
+        // localStorage.setItem('token', 'fhlafhpdafhpda111')
 
         const loginIn = await this.$http.loginIn(params).catch(err => console.log(err))
         console.log(loginIn)
         if (loginIn && loginIn.code === '00000-00000') {
           // ...
-          sessionStorage.setItem('token', loginIn.data.token)
+          localStorage.setItem('token', loginIn.data.token)
 
           this.$store.commit(types.USER_TYPE, 1)
 

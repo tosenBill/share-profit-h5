@@ -14,6 +14,17 @@
           <span>{{tab.name || ''}}</span>
         </div>
       </div>
+      <div class="classify">
+        <div
+          class="classify-name"
+          v-for="(classify, status) in classifies"
+          :class="{'active': query.status == status }"
+          @click="classify_handle(status)"
+          :key="status"
+          >
+          <span>{{classify || ''}}</span>
+        </div>
+      </div>
     </header>
     <section class="">
       <form action="" onsubmit="return false;" @submit.prevent >
@@ -38,9 +49,16 @@
         >
           <van-cell>
             <div class="item" v-for="(item, index) in list" :key="index">
-              <div class="list-item-info" :class="{active: item.cellPhone == flag, noActive: item.cellPhone !== flag}" @touchstart="touchS" @touchmove="touchM($event,item)">
+              <div class="list-item-info"
+              :class="{active: item.cellPhone == flag, noActive: item.cellPhone !== flag}"
+              @touchstart="touchS"
+              @touchmove="touchM($event,item)"
+              @click="handle_card_item(item, index)"
+              >
                 <div class="name">{{item.name || ''}}</div>
                 <div class="phone">{{item.cellPhone || ''}}</div>
+                <img v-if="index<5" src="static/images/pass.png" alt="">
+                <img v-else src="static/images/not-pass.png" alt="">
               </div>
               <div class="list-swiper-operate-btn">
                 <div class="del" @click="operate_handle('edit', item)">编辑</div>
@@ -79,17 +97,22 @@ export default {
         hasAddBtn: true
       },
       tabs: [],
+      classifies: [],
       query: {
         pageNom: 1,
         size: 20,
         cellPhone: '',
+        status: 0, // 全部0，通过1，未通过2
         type: 0 // 直推信息代表’1‘，间推 ’0‘
       },
       list: [],
       loading: false,
       finished: false,
       directCount: '',
-      indirectCount: ''
+      indirectCount: '',
+      allCount: 0,
+      failCount: 0,
+      successCount: 0
     }
   },
   components: {
@@ -104,27 +127,44 @@ export default {
   activated () {
     this.clearData()
     window.scrollTo(0, 1)
+
     const type = this.userInfo.type
-    console.log(type)
-    const token = sessionStorage.getItem('token')
-    const permiseCardCount = this.getCardCount({ token })
-    permiseCardCount.then(val => {
-      this.directCount = val.directCount || '0'
-      this.indirectCount = val.indirectCount || '0'
-      // if (type === -1)
-      if (type === 1 || type === 2) {
-        this.tabs.push({
-          name: '直推办卡信息(' + this.directCount + ')'
-        },
-        {
-          name: '团队办卡信息(' + this.indirectCount + ')'
-        })
-      } else {
-        this.tabs.push({
-          name: '直推办卡信息(' + this.directCount + ')'
-        })
-      }
-    })
+
+    if (type === 1 || type === 2) {
+      this.tabs.push({
+        name: '直推办卡信息'
+      }, {
+        name: '团队办卡信息'
+      })
+    } else {
+      this.tabs.push({ name: '直推办卡信息' })
+    }
+
+    this.classifies = [
+      '全部(' + this.allCount + ')',
+      '通过(' + this.failCount + ')',
+      '未通过(' + this.successCount + ')'
+    ]
+    /*
+      const token = localStorage.getItem('token')
+      const permiseCardCount = this.getCardCount({ token })
+      permiseCardCount.then(val => {
+        this.directCount = val.directCount || '0'
+        this.indirectCount = val.indirectCount || '0'
+        if (type === 1 || type === 2) {
+          this.tabs.push({
+            name: '直推办卡信息(' + this.directCount + ')'
+          },
+          {
+            name: '团队办卡信息(' + this.indirectCount + ')'
+          })
+        } else {
+          this.tabs.push({
+            name: '直推办卡信息(' + this.directCount + ')'
+          })
+        }
+      })
+    */
   },
   methods: {
     clearData () {
@@ -132,6 +172,7 @@ export default {
         pageNom: 1,
         size: 20,
         cellPhone: '',
+        status: 0,
         type: 0
       }
       this.list = []
@@ -150,34 +191,6 @@ export default {
 
       if (getCardItemInfo && getCardItemInfo.code) {
         return Promise.resolve(getCardItemInfo.code)
-      }
-    },
-    touchS (e) {
-      if (e.touches.length === 1) {
-        this.startX = e.touches[0].clientX
-      }
-    },
-    touchM (e, item) {
-      if (e.touches.length === 1) {
-        // var index = e.currentTarget.dataset.index
-        // 手指移动时水平方向位置
-        var moveX = e.touches[0].clientX
-        // 手指起始点位置与移动期间的差值
-        var disX = this.startX - moveX
-        var delBtnWidth = this.delBtnWidth
-        // let txtStyle = ''
-        if (disX === 0 || disX < 0) { // 如果移动距离小于等于0，说明向右滑动，文本层位置不变
-          // txtStyle = 'left:0px'
-          this.flag === item.cellPhone && (this.flag = null)
-        } else if (disX > 0) { // 移动距离大于0，文本层left值等于手指移动距离
-          // txtStyle = 'left:-' + disX + 'px'
-          // console.log(txtStyle)
-          if (disX >= delBtnWidth / 2) {
-            // 控制手指移动距离最大值为删除按钮的宽度
-            // txtStyle = 'left:-' + delBtnWidth + 'px'
-            this.flag = item.cellPhone
-          }
-        }
       }
     },
     operate_handle (type, item) {
@@ -205,7 +218,6 @@ export default {
     },
     onLoad () {
       console.log('触底刷新 is invoked, index:')
-      console.log(this.query.type)
       const type = (this.query.type === 1 ? 0 : 1)
 
       this.handleCardList({
@@ -246,20 +258,46 @@ export default {
 
       window.scrollTo(0, 1)
     },
+    handle_card_item (item, index) {
+      const { status = '', id } = item
+      let path
+
+      if (status) {
+        path = `/passDetail/${id}`
+      } else {
+        path = `/notpassDetail/${id}`
+      }
+      // const path = `/passDetail/${item.id}`
+      this.$router.push({ path })
+    },
     tab_index_handle (type) {
-      this.query.type = type
+      // this.query.type = type
       this.loading = false
       this.finished = false
       this.list = []
 
       this.query = {
+        ...this.query,
         pageNom: 1,
         size: 20,
         cellPhone: '',
-        type: type
+        type
       }
       window.scrollTo(0, 1)
-      // this.onLoad()
+    },
+    classify_handle (status) {
+      this.loading = false
+      this.finished = false
+      this.list = []
+
+      this.query = {
+        ...this.query,
+        pageNom: 1,
+        size: 20,
+        cellPhone: '',
+        status
+      }
+      window.scrollTo(0, 1)
     },
     input_blur () {
       // document.body.scrollTop = document.documentElement.scrollTop - 1
@@ -267,6 +305,34 @@ export default {
         var scrollHeight = document.documentElement.scrollTop || document.body.scrollTop || 0
         window.scrollTo(0, Math.max(scrollHeight, 0))
       }, 100)
+    },
+    touchS (e) {
+      if (e.touches.length === 1) {
+        this.startX = e.touches[0].clientX
+      }
+    },
+    touchM (e, item) {
+      if (e.touches.length === 1) {
+        // var index = e.currentTarget.dataset.index
+        // 手指移动时水平方向位置
+        var moveX = e.touches[0].clientX
+        // 手指起始点位置与移动期间的差值
+        var disX = this.startX - moveX
+        var delBtnWidth = this.delBtnWidth
+        // let txtStyle = ''
+        if (disX === 0 || disX < 0) { // 如果移动距离小于等于0，说明向右滑动，文本层位置不变
+          // txtStyle = 'left:0px'
+          this.flag === item.cellPhone && (this.flag = null)
+        } else if (disX > 50) { // 移动距离大于0，文本层left值等于手指移动距离
+          // txtStyle = 'left:-' + disX + 'px'
+          // console.log(txtStyle)
+          if (disX >= delBtnWidth / 2) {
+            // 控制手指移动距离最大值为删除按钮的宽度
+            // txtStyle = 'left:-' + delBtnWidth + 'px'
+            this.flag = item.cellPhone
+          }
+        }
+      }
     }
   },
   deactivated () {
@@ -313,6 +379,31 @@ export default {
           }
         }
       }
+      .classify{
+        display: flex;
+        padding: 10px;
+        justify-content: space-around;
+        .classify-name{
+          position relative
+          font-size:14px;
+          font-family:PingFangSC-Medium;
+          font-weight:500;
+          color:rgba(51,51,51,1);
+          &.active{
+            color #333
+            span:before{
+              content: '';
+              position: absolute;
+              width: 0.5rem;
+              height: 0.05333rem;
+              bottom: -2px;
+              left: 50%;
+              background: #333;
+              transform: translateX(-50%);
+            }
+          }
+        }
+      }
     }
     section{
       form{
@@ -333,8 +424,8 @@ export default {
           background: #fff;
           height 44px
           position relative
-          margin 0 20px
-          border-bottom 2px solid #EFEFF4
+          // margin 0 20px
+          border-bottom 1px solid #EFEFF4
           &:last-child{
             border-bottom none
           }
@@ -362,6 +453,10 @@ export default {
             z-index:5;
             background #fff;
             transition:left 200ms;
+            img{
+              width: 40px;
+              height:40px;
+            }
             &.active{
               left: -44px;
             }

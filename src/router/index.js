@@ -103,6 +103,22 @@ const routes = [
           keepAlive: true // 需要被缓存
         },
         component: () => import('@/view/handlePersonInfo.vue')
+      },
+      {
+        path: '/passDetail/:id',
+        name: 'passDetail',
+        meta: {
+          keepAlive: true // 需要被缓存
+        },
+        component: () => import('@/view/passDetail.vue')
+      },
+      {
+        path: '/notpassDetail/:id',
+        name: 'notpassDetail',
+        meta: {
+          keepAlive: true // 需要被缓存
+        },
+        component: () => import('@/view/notpassDetail.vue')
       }
     ]
   }

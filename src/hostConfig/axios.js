@@ -18,7 +18,7 @@ axios.interceptors.request.use(
     // console.log('window._vue', window._Vue.$store.state.userDefaultDomain)
     // 每次发送请求之前判断是否存在token，如果存在，则统一在http请求的header都加上token，不用每次请求都手动添加了
     // 即使本地存在token，也有可能token是过期的，所以在响应拦截器中要对返回状态进行判断
-    const token = sessionStorage.getItem('token')
+    const token = localStorage.getItem('token')
     // console.log(token)
     // token && (config.headers.access_token = token)
     if (token) {
@@ -39,7 +39,6 @@ axios.interceptors.response.use(
     // let _data = res.data
     // console.log(_data)
     if (res.status === 200) {
-      console.log('res', res.data.code)
       if (res.data.code === '00001-00000') { // 用户未登录
         window._Vue.$router.replace({ path: '/' })
       }

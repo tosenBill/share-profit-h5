@@ -65,7 +65,7 @@ export default {
   },
   activated () {
     console.log('activated invoked')
-    const token = sessionStorage.getItem('token')
+    const token = localStorage.getItem('token')
 
     this.getUserInfo()
 
@@ -78,7 +78,6 @@ export default {
   methods: {
     async getUserInfo () {
       const userInfo = await this.$http.getUserInfo().catch()
-      console.log(userInfo)
       if (userInfo && userInfo.code === '00000-00000') {
         //
         this.$store.commit(types.SET_USER_INFO, userInfo.data)
@@ -104,7 +103,6 @@ export default {
       const getCardCount = await this.$http.getCardCount(params).catch(err => console.log(err))
 
       if (getCardCount && getCardCount.code === '00000-00000') {
-        console.log(getCardCount)
         // A（1）:直推间推相加、B/管理员（-1）只需取直推
         if (this.userInfo.type === 1) {
           this.cardCount = Number(getCardCount.data.directCount) + Number(getCardCount.data.indirectCount)

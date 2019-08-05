@@ -52,7 +52,7 @@ export default {
         .then(res => {
           this.loadingToast.clear()
 
-          sessionStorage.removeItem('token')
+          localStorage.removeItem('token')
           this.$router.replace({ path: '/' })
         })
     },

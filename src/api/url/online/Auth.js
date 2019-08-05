@@ -60,5 +60,9 @@ export default {
   // 获取办卡信息数量
   getCardCount (data) {
     return this.post(this.ONLINE_ROOT_PATH + '/card/team/count', data)
+  },
+  // 根据id获取办卡item详情
+  getHandleCardDetailById (data) {
+    return this.post(this.ONLINE_ROOT_PATH + '/card/team/count', data)
   }
 }
