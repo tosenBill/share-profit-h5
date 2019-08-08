@@ -65,7 +65,7 @@ export default {
   },
   activated () {
     console.log('activated invoked')
-    const token = sessionStorage.getItem('token')
+    const token = localStorage.getItem('token')
 
     this.getUserInfo()
 

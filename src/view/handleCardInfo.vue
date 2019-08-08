@@ -106,7 +106,7 @@ export default {
     window.scrollTo(0, 1)
     const type = this.userInfo.type
     console.log(type)
-    const token = sessionStorage.getItem('token')
+    const token = localStorage.getItem('token')
     const permiseCardCount = this.getCardCount({ token })
     permiseCardCount.then(val => {
       this.directCount = val.directCount || '0'

@@ -95,7 +95,7 @@ export default {
     const type = this.userInfo.type
     console.log(type)
     if (type === 1) {
-      const token = sessionStorage.getItem('token')
+      const token = localStorage.getItem('token')
 
       const permiseGroupCount = this.getGroupCount({ token })
       permiseGroupCount.then(val => {

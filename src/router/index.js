@@ -14,10 +14,10 @@ const routes = [
   {
     path: '/',
     component: Index,
-    redirect: '/loginIn',
+    redirect: '/home',
     children: [
       {
-        path: '/',
+        path: '/loginIn',
         name: 'loginIn',
         meta: {
           keepAlive: true // 需要被缓存
