@@ -40,7 +40,7 @@ axios.interceptors.response.use(
     // console.log(_data)
     if (res.status === 200) {
       if (res.data.code === '00001-00000') { // 用户未登录
-        window._Vue.$router.replace({ path: '/' })
+        window._Vue.$router.replace({ path: '/loginIn' })
       }
     }
     return res
