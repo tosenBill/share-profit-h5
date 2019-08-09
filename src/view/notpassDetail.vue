@@ -4,7 +4,7 @@
     <section class="padding-10">
       <div class="status-outer">
         <div class="status-list">
-          <p class="tip">还剩下{{unCompleteCount || ''}}项任务未完成</p>
+          <p class="tip" v-if="unCompleteCount">还剩下{{unCompleteCount}}项任务未完成</p>
           <div class="status-content clear">
             <div class="item">
               <span class="status-judge"
@@ -53,13 +53,38 @@
             </div>
           </div>
         </div>
+        <div class="detail-tip" style="color:#e4393c" v-if="personInfo.errorMsg">{{personInfo.errorMsg || ''}}</div>
         <div class="logistics" v-if="personInfo.logisticsNum">
-          <span>物流单号：</span>
-          <span>{{personInfo.logisticsNum || ''}}</span>
+          <div class="logistics-item">
+            <div>
+              <span class="label">物流公司：</span>
+              <span>{{personInfo.logisticsCompany || ''}}</span>
+            </div>
+            <div>
+              <span class="label">物流单号：</span>
+              <span>{{personInfo.logisticsNum || ''}}</span>
+            </div>
+          </div>
+          <div class="logistics-item">
+            <div>
+              <span class="label">收 件 人：</span>
+              <span>{{personInfo.receiverName || ''}}</span>
+            </div>
+            <div>
+              <span class="label">联系电话：</span>
+              <span>{{personInfo.receiverPhone || ''}}</span>
+            </div>
+          </div>
+          <div class="logistics-item">
+            <div>
+              <span class="label">收货地址：</span>
+              <span>{{personInfo.receiverAddress || ''}}</span>
+            </div>
+          </div>
         </div>
-        <div class="detail-tip" style="color:#e4393c">{{personInfo.errorMsg || ''}}</div>
-        <!-- <div class="next-tip">正在审核、余额宝未冻结。</div> -->
-        <div class="tip-content"></div>
+
+        <div class="next-tip" v-if="personInfo.nextStep">下一步操作提示：</div>
+        <div class="tip-content">{{personInfo.nextStep || ''}}</div>
       </div>
       <div class="form-list">
         <div class="form-item">
@@ -144,11 +169,11 @@ export default {
           ...getHandleCardDetailByPhone.data
         }
 
-        this.personInfo.auditStatus === '0' && this.unCompleteCount++
-        this.personInfo.activateStatus === '0' && this.unCompleteCount++
-        this.personInfo.logisticsStatus === '0' && this.unCompleteCount++
-        this.personInfo.isFreeze === '0' && this.unCompleteCount++
-        this.personInfo.isPay === '0' && this.unCompleteCount++
+        this.personInfo.auditStatus !== '1' && this.unCompleteCount++
+        this.personInfo.activateStatus !== '1' && this.unCompleteCount++
+        this.personInfo.logisticsStatus !== '1' && this.unCompleteCount++
+        this.personInfo.isFreeze !== '1' && this.unCompleteCount++
+        this.personInfo.isPay !== '1' && this.unCompleteCount++
       } else {
         this.$toast(getHandleCardDetailByPhone.errMsg)
       }
@@ -258,6 +283,19 @@ export default {
         .logistics{
           text-align left
           margin-top: 10px;
+          padding: 0 10px;
+          .logistics-item{
+            display flex;
+            justify-content space-between
+            margin-bottom: 3px;
+            >div{
+              flex:1
+              display flex;
+            }
+            .label{
+              width: 70px
+            }
+          }
         }
         .detail-tip{
           font-size:12px;
@@ -268,14 +306,19 @@ export default {
           text-align left
         }
         .next-tip{
-          font-size:14px;
+          font-size:12px;
           font-family:PingFang-SC-Medium;
-          font-weight:500;
           color:rgba(51,51,51,1);
           text-align left
+          margin-bottom 10px
         }
         .tip-content{
+          font-size:14px;
+          font-weight:500;
           min-height 30px
+          margin-bottom 10px
+          text-align: left;
+          // text-indent 2em
         }
       }
     }
