@@ -39,9 +39,17 @@
         >
           <van-cell>
             <div class="item" v-for="(item, index) in list" :key="index">
-              <div class="list-item-info" :class="{active: item.cellPhone == flag, noActive: item.cellPhone !== flag}" @touchstart="touchS" @touchmove="touchM($event,item)">
+              <div class="list-item-info"
+                :class="{active: item.cellPhone == flag, noActive: item.cellPhone !== flag}"
+                @touchstart="touchS"
+                @touchmove="touchM($event,item)"
+                @click="handle_card_item(item, index)">
                 <div class="name">{{item.name || ''}}</div>
                 <div class="phone">{{item.cellPhone || ''}}</div>
+                <div class="img-box">
+                  <img v-if="item.status == '1'" src="static/images/pass.png" alt="">
+                  <img v-else src="static/images/not-pass.png" alt="">
+                </div>
               </div>
               <div class="list-swiper-operate-btn">
                 <div class="del" @click="operate_handle('del', item)">删除</div>
@@ -137,6 +145,18 @@ export default {
             this.$toast(res.errMsg)
           }
         })
+    },
+    handle_card_item (item, index) {
+      const { status, cellPhone } = item
+      let path
+
+      if (status === '1') { // '1、通过；0、未通过
+        path = `/passDetail/${cellPhone}`
+      } else {
+        path = `/notpassDetail/${cellPhone}`
+      }
+      // const path = `/passDetail/${item.id}`
+      this.$router.push({ path })
     },
     tab_index_handle (type) {
       this.query.type = type
@@ -328,6 +348,7 @@ export default {
             z-index:5;
             background #fff;
             transition:left 200ms;
+            padding-left 30px
             .name,
             .phone{
               flex: 1;
@@ -339,6 +360,15 @@ export default {
             .phone{
               // margin-left 95px
               text-align center
+            }
+            .img-box{
+              flex: 1;
+              display flex;
+              justify-content center;
+              img{
+                width: 40px;
+                height:40px;
+              }
             }
             &.active{
               left: -44px;

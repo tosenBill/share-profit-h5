@@ -4,7 +4,7 @@
     <section class="padding-10">
       <div class="status-outer">
         <div class="status-list">
-          <p class="tip">还剩下5项任务未完成</p>
+          <p class="tip">还剩下{{unCompleteCount || ''}}项任务未完成</p>
           <div class="status-content clear">
             <div class="item">
               <span class="status-judge"
@@ -53,7 +53,11 @@
             </div>
           </div>
         </div>
-        <div class="detail-tip">{{personInfo.errorMsg}}</div>
+        <div class="logistics" v-if="personInfo.logisticsNum">
+          <span>物流单号：</span>
+          <span>{{personInfo.logisticsNum || ''}}</span>
+        </div>
+        <div class="detail-tip" style="color:#e4393c">{{personInfo.errorMsg || ''}}</div>
         <!-- <div class="next-tip">正在审核、余额宝未冻结。</div> -->
         <div class="tip-content"></div>
       </div>
@@ -76,7 +80,7 @@
         </div>
         <div class="form-item">
           <div class="label">收货地址</div>
-          <input style="color:#333;" v-model.trim="personInfo.address" type="text" placeholder="">
+          <input readonly="readonly" v-model.trim="personInfo.address" type="text" placeholder="">
         </div>
         <div class="form-item">
           <div class="label">权益礼包发放</div>
@@ -105,10 +109,10 @@ export default {
         deliveryType: '',
         address: '',
         auditStatus: 0, // 审核状态 --- 0：没操作；1，已操作；2：异常
-        activateStatus: 1, // 激活状态
-        logisticsStatus: 2, // 物流状态
+        activateStatus: 0, // 激活状态
+        logisticsStatus: 0, // 物流状态
         isFreeze: 0, // 是否冻结
-        isPay: 1, // 是否缴费
+        isPay: 0, // 是否缴费
         status: 0, // 全局状态
         errorMsg: ''
       },
@@ -122,35 +126,36 @@ export default {
   computed: {
   },
   activated () {
-    this.id = this.$route.params.id
-    console.log(this.id)
-    this.getHandleCardDetailById({ id: this.id })
+    this.cellPhone = this.$route.params.cellPhone
+    console.log(this.cellPhone)
+    this.getHandleCardDetailByPhone({ cellPhone: this.cellPhone })
   },
   mounted () {
 
   },
   methods: {
-    async getHandleCardDetailById (params) {
-      const getHandleCardDetailById = await this.$http.getHandleCardDetailById(params).catch(err => console.log(err))
+    async getHandleCardDetailByPhone (params) {
+      const getHandleCardDetailByPhone = await this.$http.getHandleCardDetailByPhone(params).catch(err => console.log(err))
 
-      if (getHandleCardDetailById && getHandleCardDetailById.code === '00000-00000') {
-        console.log(getHandleCardDetailById.data)
+      if (getHandleCardDetailByPhone && getHandleCardDetailByPhone.code === '00000-00000') {
+        console.log(getHandleCardDetailByPhone.data)
         this.personInfo = {
           ...this.personInfo,
-          ...getHandleCardDetailById.data
+          ...getHandleCardDetailByPhone.data
         }
 
-        this.personInfo.auditStatus === '0' && this.auditStatus++
-        this.personInfo.activateStatus === '0' && this.activateStatus++
-        this.personInfo.logisticsStatus === '0' && this.logisticsStatus++
-        this.personInfo.isFreeze === '0' && this.isFreeze++
-        this.personInfo.isPay === '0' && this.isPay++
+        this.personInfo.auditStatus === '0' && this.unCompleteCount++
+        this.personInfo.activateStatus === '0' && this.unCompleteCount++
+        this.personInfo.logisticsStatus === '0' && this.unCompleteCount++
+        this.personInfo.isFreeze === '0' && this.unCompleteCount++
+        this.personInfo.isPay === '0' && this.unCompleteCount++
       } else {
-        this.$toast(getHandleCardDetailById.errMsg)
+        this.$toast(getHandleCardDetailByPhone.errMsg)
       }
     }
   },
   deactivated () {
+    this.unCompleteCount = 0
     this.personInfo = {
       name: '',
       contactNumber: '',
@@ -249,6 +254,10 @@ export default {
               }
             }
           }
+        }
+        .logistics{
+          text-align left
+          margin-top: 10px;
         }
         .detail-tip{
           font-size:12px;

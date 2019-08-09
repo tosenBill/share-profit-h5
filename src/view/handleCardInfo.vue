@@ -57,7 +57,7 @@
               >
                 <div class="name">{{item.name || ''}}</div>
                 <div class="phone">{{item.cellPhone || ''}}</div>
-                <img v-if="index<5" src="static/images/pass.png" alt="">
+                <img v-if="item.status == '1'" src="static/images/pass.png" alt="">
                 <img v-else src="static/images/not-pass.png" alt="">
               </div>
               <div class="list-swiper-operate-btn">
@@ -142,8 +142,8 @@ export default {
 
     this.classifies = [
       '全部(' + this.allCount + ')',
-      '通过(' + this.failCount + ')',
-      '未通过(' + this.successCount + ')'
+      '通过(' + this.successCount + ')',
+      '未通过(' + this.failCount + ')'
     ]
     /*
       const token = localStorage.getItem('token')
@@ -231,6 +231,17 @@ export default {
       this.loading = false
       if (handleCardList && handleCardList.code === '00000-00000') {
         const _data = handleCardList.data
+
+        this.allCount = _data.allCount
+        this.failCount = _data.failCount
+        this.successCount = _data.successCount
+
+        this.classifies = [
+          '全部(' + this.allCount + ')',
+          '通过(' + this.successCount + ')',
+          '未通过(' + this.failCount + ')'
+        ]
+
         this.list.push(
           ..._data.records
         )
@@ -259,13 +270,13 @@ export default {
       window.scrollTo(0, 1)
     },
     handle_card_item (item, index) {
-      const { status = '', id } = item
+      const { status, cellPhone } = item
       let path
 
-      if (status) {
-        path = `/passDetail/${id}`
+      if (status === '1') { // '1、通过；0、未通过
+        path = `/passDetail/${cellPhone}`
       } else {
-        path = `/notpassDetail/${id}`
+        path = `/notpassDetail/${cellPhone}`
       }
       // const path = `/passDetail/${item.id}`
       this.$router.push({ path })

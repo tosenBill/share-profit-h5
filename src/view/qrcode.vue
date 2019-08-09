@@ -80,7 +80,7 @@ export default {
       }
       .qrcode-img{
         min-height 320px
-        height calc(100vw - 50px);
+        // height calc(100vw - 50px);
         background #D8D8D8
         >img{
           width 100%;

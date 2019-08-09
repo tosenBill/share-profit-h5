@@ -5,7 +5,7 @@
       <div class="form-list">
         <div class="form-item status">
           <div class="label">审核状态</div>
-          <input readonly="readonly" value="已通过" type="text" placeholder="" @blur="input_blur">
+          <input readonly="readonly" v-model="personInfo.status" type="text" placeholder="" @blur="input_blur">
         </div>
         <div class="form-item">
           <div class="label">姓名</div>
@@ -25,7 +25,7 @@
         </div>
         <div class="form-item">
           <div class="label">收货地址</div>
-          <input style="color:#333;" v-model.trim="personInfo.address" type="text" placeholder="" @blur="input_blur">
+          <input readonly="readonly" v-model.trim="personInfo.address" type="text" placeholder="" @blur="input_blur">
         </div>
         <div class="form-item">
           <div class="label">权益礼包发放</div>
@@ -68,31 +68,34 @@ export default {
   computed: {
   },
   activated () {
-    this.id = this.$route.params.id
-    console.log(this.id)
-    this.getHandleCardDetailById({ id: this.id })
+    this.cellPhone = this.$route.params.cellPhone
+    console.log(this.cellPhone)
+    this.getHandleCardDetailByPhone({ cellPhone: this.cellPhone })
   },
   mounted () {
 
   },
   methods: {
-    async getHandleCardDetailById (params) {
-      const getHandleCardDetailById = await this.$http.getHandleCardDetailById(params).catch(err => console.log(err))
+    async getHandleCardDetailByPhone (params) {
+      const getHandleCardDetailByPhone = await this.$http.getHandleCardDetailByPhone(params).catch(err => console.log(err))
 
-      if (getHandleCardDetailById && getHandleCardDetailById.code === '00000-00000') {
-        console.log(getHandleCardDetailById.data)
+      if (getHandleCardDetailByPhone && getHandleCardDetailByPhone.code === '00000-00000') {
+        console.log(getHandleCardDetailByPhone.data)
+        const status = getHandleCardDetailByPhone.data.status === '1' ? '通过' : '未通过'
+
         this.personInfo = {
           ...this.personInfo,
-          ...getHandleCardDetailById.data
+          ...getHandleCardDetailByPhone.data,
+          status
         }
 
         this.personInfo.isMx = !!this.personInfo.isMx
 
         console.log(this.personInfo)
-      } else if (getHandleCardDetailById && getHandleCardDetailById.code === '00001-00004') {
+      } else if (getHandleCardDetailByPhone && getHandleCardDetailByPhone.code === '00001-00004') {
         this.$toast('您没有权限执行此操作')
       } else {
-        this.$toast(getHandleCardDetailById.errMsg)
+        this.$toast(getHandleCardDetailByPhone.errMsg)
       }
     },
     async complete () {
