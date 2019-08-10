@@ -64,24 +64,36 @@ export default {
     ...mapGetters(['userInfo'])
   },
   activated () {
+    this.clearData()
+
     console.log('activated invoked')
-    const token = localStorage.getItem('token')
-
     this.getUserInfo()
+    // const token = localStorage.getItem('token')
 
-    token && this.getGroupCount({ token })
-    token && this.getCardCount({ token })
+    // token && this.getGroupCount({ token })
+    // token && this.getCardCount({ token })
+  },
+  deactivated () {
+    this.clearData()
   },
   mounted () {
 
   },
   methods: {
+    clearData () {
+      this.groupCount = ''
+      this.cardCount = ''
+    },
     async getUserInfo () {
       const userInfo = await this.$http.getUserInfo().catch()
       if (userInfo && userInfo.code === '00000-00000') {
         //
         this.$store.commit(types.SET_USER_INFO, userInfo.data)
         console.log(this.userInfo)
+
+        const token = localStorage.getItem('token')
+        token && this.getGroupCount({ token })
+        token && this.getCardCount({ token })
       } else {
         this.$toast(userInfo.errMsg)
       }

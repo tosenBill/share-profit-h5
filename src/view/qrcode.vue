@@ -47,6 +47,10 @@ export default {
   mounted () {
   },
   methods: {
+    clearData () {
+      this.codeImgPath = ''
+      this.copyData = ''
+    },
     async getMyQrcodeInfo (params) {
       const getMyQrcodeInfo = await this.$http.getMyQrcodeInfo(params).catch(err => console.log(err))
 

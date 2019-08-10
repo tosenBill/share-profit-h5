@@ -160,6 +160,13 @@ export default {
   activated () {
     this.cellPhone = this.$route.params.cellPhone
     console.log(this.cellPhone)
+    this.loadingToast = Toast.loading({
+      duration: 0, // 持续展示 toast
+      forbidClick: true, // 禁用背景点击
+      loadingType: 'spinner',
+      message: '正在加载...'
+    })
+
     this.getHandleCardDetailByPhone({ cellPhone: this.cellPhone })
   },
   mounted () {
@@ -181,7 +188,10 @@ export default {
         this.personInfo.logisticsStatus !== '1' && this.unCompleteCount++
         this.personInfo.isFreeze !== '1' && this.unCompleteCount++
         this.personInfo.isPay !== '1' && this.unCompleteCount++
+
+        this.loadingToast.clear()
       } else {
+        this.loadingToast.clear()
         this.$toast(getHandleCardDetailByPhone.errMsg)
       }
     }

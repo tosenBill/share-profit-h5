@@ -83,8 +83,7 @@ export default {
       startX: 0,
       delBtnWidth: 50,
       headerNav: {
-        hasAddBtn: true,
-        title: '查看工号'
+        hasAddBtn: true
       },
       keywords: '',
       tabs: [],
@@ -156,6 +155,7 @@ export default {
     if (from.fullPath === '/home') {
       next(vm => {
         vm.scroll = 1
+        vm.clearData()
       })
     } else {
       next()
@@ -168,9 +168,11 @@ export default {
       this.isLoading = false
       this.showLoading = true
 
+      const type = (this.query.type === 1 ? 0 : 1)
       this.getMyGroupList({
         ...this.query,
-        pageNom: 1
+        pageNom: 1,
+        type
       })
       // this.query.pageNom = 1
       // this.onLoad()
@@ -310,6 +312,7 @@ export default {
       }
       this.list = []
       this.loading = false
+      this.isLoading = false
       this.finished = false
       this.keywords = ''
     },

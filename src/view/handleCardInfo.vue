@@ -137,7 +137,7 @@ export default {
     setTimeout(() => {
       window.scroll(0, this.scroll)
     }, 0)
-
+    window.scroll(0, this.scroll)
     const type = this.userInfo.type
 
     if (type === 1 || type === 2) {
@@ -179,7 +179,11 @@ export default {
   beforeRouteEnter (to, from, next) {
     if (from.fullPath === '/home') {
       next(vm => {
-        vm.scroll = 1
+        vm.scroll = 10
+        vm.clearData()
+        vm.allCount = 0
+        vm.successCount = 0
+        vm.failCount = 0
       })
     } else {
       next()
@@ -195,6 +199,7 @@ export default {
         type: 0
       }
       this.list = []
+      this.isLoading = false
       this.loading = false
       this.finished = false
     },
@@ -207,9 +212,12 @@ export default {
 
       // window.scroll(0, 1)
       // this.onLoad()
+      console.log(this.query)
+      const type = (this.query.type === 1 ? 0 : 1)
 
       this.handleCardList({
         ...this.query,
+        type,
         pageNom: 1
       })
     },

@@ -70,6 +70,13 @@ export default {
   activated () {
     this.cellPhone = this.$route.params.cellPhone
     console.log(this.cellPhone)
+    this.loadingToast = Toast.loading({
+      duration: 0, // 持续展示 toast
+      forbidClick: true, // 禁用背景点击
+      loadingType: 'spinner',
+      message: '正在加载...'
+    })
+
     this.getHandleCardDetailByPhone({ cellPhone: this.cellPhone })
   },
   mounted () {
@@ -91,10 +98,12 @@ export default {
 
         this.personInfo.isMx = !!this.personInfo.isMx
 
-        console.log(this.personInfo)
+        this.loadingToast.clear()
       } else if (getHandleCardDetailByPhone && getHandleCardDetailByPhone.code === '00001-00004') {
+        this.loadingToast.clear()
         this.$toast('您没有权限执行此操作')
       } else {
+        this.loadingToast.clear()
         this.$toast(getHandleCardDetailByPhone.errMsg)
       }
     },
