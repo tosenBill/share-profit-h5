@@ -133,10 +133,12 @@ export default {
       let path = ''
       switch (type) {
         case 1:
-          path = '/myGroup'
+          // path = '/myGroup'
+          path = `/myGroup/${this.userInfo.type}`
           break
         case 2:
-          path = '/handleCardInfo'
+          // path = '/handleCardInfo'
+          path = `/handleCardInfo/${this.userInfo.type}`
           break
         case 3:
           path = '/addGroupPerson'

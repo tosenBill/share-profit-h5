@@ -9,7 +9,7 @@
       <div class="tabs">
         <div
           class="tab"
-          :class="{'active': query.type == index && userInfo.type != 2}"
+          :class="{'active': query.type == index && type != 2}"
           v-for="(tab, index) in tabs"
           :key="index"
           @click="tab_index_handle(index)"
@@ -101,7 +101,8 @@ export default {
       directCount: '',
       indirectCount: '',
       scroll: 1,
-      index: 1
+      index: 1,
+      type: '' // 用户类型
     }
   },
   components: {
@@ -121,9 +122,11 @@ export default {
       window.scroll(0, this.scroll)
     }, 0)
 
-    const type = this.userInfo.type
-    console.log(type)
-    if (type === 1) {
+    // const type = this.userInfo.type
+    this.type = this.$route.params.type
+    console.log(this.type)
+
+    if (this.type === '1') {
       const token = localStorage.getItem('token')
 
       const permiseGroupCount = this.getGroupCount({ token })

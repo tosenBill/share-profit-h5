@@ -56,8 +56,24 @@ const routes = [
         },
         component: () => import('@/view/changePassword.vue')
       },
+      // {
+      //   path: '/myGroup',
+      //   name: 'myGroup',
+      //   meta: {
+      //     keepAlive: true // 需要被缓存
+      //   },
+      //   component: () => import('@/view/myGroup.vue')
+      // },
+      // {
+      //   path: '/handleCardInfo',
+      //   name: 'handleCardInfo',
+      //   meta: {
+      //     keepAlive: true // 需要被缓存
+      //   },
+      //   component: () => import('@/view/handleCardInfo.vue')
+      // },
       {
-        path: '/myGroup',
+        path: '/myGroup/:type',
         name: 'myGroup',
         meta: {
           keepAlive: true // 需要被缓存
@@ -65,7 +81,7 @@ const routes = [
         component: () => import('@/view/myGroup.vue')
       },
       {
-        path: '/handleCardInfo',
+        path: '/handleCardInfo/:type',
         name: 'handleCardInfo',
         meta: {
           keepAlive: true // 需要被缓存

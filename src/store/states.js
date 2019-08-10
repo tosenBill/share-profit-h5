@@ -1,5 +1,5 @@
 const state = {
-  userInfo: { name: 1 },
+  userInfo: {},
   sidebar: true,
   tabIndex: 0,
   userDefaultDomain: true,

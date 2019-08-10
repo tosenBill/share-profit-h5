@@ -4,7 +4,7 @@
     <section class="padding-10">
       <div class="status-outer">
         <div class="status-list">
-          <p class="tip" v-if="unCompleteCount">还剩下{{unCompleteCount}}项任务未完成</p>
+          <p class="tip" v-if="unCompleteCount">距离佣金结算还有{{unCompleteCount}}项任务未完成</p>
           <div class="status-content clear">
             <div class="item">
               <span class="status-judge"
@@ -51,15 +51,16 @@
               </span>
               <span class="word">权益卡激活</span>
             </div>
-            <div class="item">
+            <!-- <div class="item">
               <span class="status-judge">
                 <i class="fa fa-check" aria-hidden="true"></i>
                 <i class="fa fa-exclamation" aria-hidden="true"></i>
               </span>
               <span class="word">总部结算</span>
-            </div>
+            </div> -->
           </div>
         </div>
+        <p class="unCompleteCount" v-if="pageComplete && !unCompleteCount">总部结算中</p>
         <div class="detail-tip" style="color:#e4393c" v-if="personInfo.errorMsg">{{personInfo.errorMsg || ''}}</div>
         <div class="logistics" v-if="personInfo.logisticsNum && personInfo.activateStatus != 1">
           <div class="logistics-item">
@@ -133,6 +134,7 @@ export default {
   data () {
     return {
       unCompleteCount: 0,
+      pageComplete: false, // 数据是否加载完
       personInfo: {
         name: '',
         contactNumber: '',
@@ -158,6 +160,7 @@ export default {
   computed: {
   },
   activated () {
+    this.pageComplete = false
     this.cellPhone = this.$route.params.cellPhone
     console.log(this.cellPhone)
     this.loadingToast = Toast.loading({
@@ -189,8 +192,11 @@ export default {
         this.personInfo.isFreeze !== '1' && this.unCompleteCount++
         this.personInfo.isPay !== '1' && this.unCompleteCount++
 
+        // this.unCompleteCount
+        this.pageComplete = true
         this.loadingToast.clear()
       } else {
+        this.pageComplete = true
         this.loadingToast.clear()
         this.$toast(getHandleCardDetailByPhone.errMsg)
       }
@@ -234,6 +240,11 @@ export default {
         }
       }
       .status-outer{
+        .unCompleteCount{
+          text-align: left;
+          margin: 5px 0;
+          font-weight: bold;
+        }
         .status-list{
           padding: 10px;
           border-radius 5px;
@@ -328,7 +339,7 @@ export default {
           font-family:PingFang-SC-Medium;
           color:rgba(51,51,51,1);
           text-align left
-          margin-bottom 10px
+          margin 5px 0 10px 0
         }
         .tip-content{
           font-size:14px;
