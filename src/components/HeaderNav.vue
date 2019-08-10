@@ -3,6 +3,7 @@
     <header>
       <div class="back-box">
         <span @click="go_back" class="arrow arrow-left"></span>
+        <!-- <span v-if="headerNav.title">{{headerNav.title || ''}}</span> -->
       </div>
       <!-- <div class="add-box" v-if="headerNav && headerNav.hasAddBtn" @click="add_handle">
         <strong class="add-btn">＋</strong>

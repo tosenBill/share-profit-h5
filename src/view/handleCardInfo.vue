@@ -1,5 +1,5 @@
 <template>
-  <div class="handleCardInfo" id="handleCardInfo">
+  <div class="handleCardInfo" id="handleCardInfo" ref="handleCardInfo">
     <header-nav :headerNav = 'headerNav' @addHasClick="add_handle">
     </header-nav>
     <header>
@@ -38,7 +38,9 @@
           @blur="input_blur"
         >
       </form>
+      <van-loading v-if="showLoading" color="#1989fa" size="20px">加载中...</van-loading>
       <div class="list">
+      <van-pull-refresh v-model="isLoading" @refresh="onRefresh" >
         <van-list
           v-model="loading"
           :finished="finished"
@@ -47,36 +49,36 @@
           @check="check_scroll"
           :offset="50"
         >
-          <van-cell>
-            <div class="item" v-for="(item, index) in list" :key="index">
-              <div class="list-item-info"
-              :class="{active: item.cellPhone == flag, noActive: item.cellPhone !== flag}"
-              @touchstart="touchS"
-              @touchmove="touchM($event,item)"
-              @click="handle_card_item(item, index)"
-              >
-                <div class="name">{{item.name || ''}}</div>
-                <div class="phone">{{item.cellPhone || ''}}</div>
-                <img v-if="item.status == '1'" src="static/images/pass.png" alt="">
-                <img v-else src="static/images/not-pass.png" alt="">
+          <!-- <van-cell> -->
+            <div v-for="(item, index) in list" :key="index" class="item-box">
+              <div class="myDate" v-if="item.myDate">
+                <span>{{item.myDate}}</span>
+                <!-- <span>（</span>
+                <span>{{item.count}}</span>
+                <span>）</span> -->
               </div>
-              <div class="list-swiper-operate-btn">
-                <div class="del" @click="operate_handle('edit', item)">编辑</div>
+              <div class="item">
+                <!-- <div v-if="item.myDate">{{item.myDate}}</div> -->
+                <div class="list-item-info"
+                :class="{active: item.cellPhone == flag, noActive: item.cellPhone !== flag}"
+                @touchstart="touchS"
+                @touchmove="touchM($event,item)"
+                @click="handle_card_item(item, index)"
+                >
+                  <div>{{item.count}}</div>
+                  <div class="name"><span>{{item.name || ''}}</span></div>
+                  <div class="phone">{{item.cellPhone || ''}}</div>
+                  <img v-if="item.status == '1'" src="static/images/pass.png" alt="">
+                  <img v-else src="static/images/not-pass.png" alt="">
+                </div>
+                <div class="list-swiper-operate-btn">
+                  <div class="del" @click="operate_handle('edit', item)">编辑</div>
+                </div>
               </div>
             </div>
-          </van-cell>
+          <!-- </div> -->
         </van-list>
-
-        <!-- <div class="item">
-          <span>石荣成</span>
-          <span>15175916591749</span>
-          <img src="static/images/pass.png" alt="">
-        </div>
-        <div class="item">
-          <span>沈小童</span>
-          <span>15175916591749</span>
-          <img src="static/images/notpass.png" alt="">
-        </div> -->
+      </van-pull-refresh>
       </div>
     </section>
   </div>
@@ -86,7 +88,7 @@
 import { mapGetters } from 'vuex'
 import HeaderNav from '@/components/HeaderNav.vue'
 
-import { List } from 'vant'
+import { List, PullRefresh, Loading } from 'vant'
 export default {
   data () {
     return {
@@ -106,27 +108,35 @@ export default {
         type: 0 // 直推信息代表’1‘，间推 ’0‘
       },
       list: [],
+      showLoading: false,
+      isLoading: false, // 下拉刷新
       loading: false,
       finished: false,
       directCount: '',
       indirectCount: '',
       allCount: 0,
       failCount: 0,
-      successCount: 0
+      successCount: 0,
+      scroll: 1,
+      index: 1
     }
   },
   components: {
     HeaderNav,
-    List
+    List,
+    PullRefresh,
+    Loading
   },
   computed: {
     ...mapGetters(['userInfo'])
   },
   mounted () {
+
   },
   activated () {
-    this.clearData()
-    window.scrollTo(0, 1)
+    setTimeout(() => {
+      window.scroll(0, this.scroll)
+    }, 0)
 
     const type = this.userInfo.type
 
@@ -166,6 +176,15 @@ export default {
       })
     */
   },
+  beforeRouteEnter (to, from, next) {
+    if (from.fullPath === '/home') {
+      next(vm => {
+        vm.scroll = 1
+      })
+    } else {
+      next()
+    }
+  },
   methods: {
     clearData () {
       this.query = {
@@ -178,6 +197,21 @@ export default {
       this.list = []
       this.loading = false
       this.finished = false
+    },
+    // 下拉刷新
+    onRefresh () {
+      this.list = []
+      this.isLoading = false
+      this.showLoading = true
+      // this.query.pageNom = 1
+
+      // window.scroll(0, 1)
+      // this.onLoad()
+
+      this.handleCardList({
+        ...this.query,
+        pageNom: 1
+      })
     },
     async getCardCount (params) {
       const getCardCount = await this.$http.getCardCount(params).catch(err => console.log(err))
@@ -226,11 +260,14 @@ export default {
       })
     },
     async handleCardList (params) {
+      this.index = 1
       const handleCardList = await this.$http.handleCardList(params).catch(err => console.log(err))
 
       this.loading = false
       if (handleCardList && handleCardList.code === '00000-00000') {
         const _data = handleCardList.data
+
+        const _records = _data.records
 
         this.allCount = _data.allCount
         this.failCount = _data.failCount
@@ -243,19 +280,37 @@ export default {
         ]
 
         this.list.push(
-          ..._data.records
+          ..._records
         )
+        if (this.list.length === 1) {
+          this.list[0].count = 1
+          this.list[0].myDate = this.list[0].createDate
+        }
+        for (let i = 0; i < this.list.length - 1; i++) {
+          this.list[i].count = this.index
 
+          this.list[0].myDate = this.list[0].createDate
+          if (this.list[i + 1].createDate !== this.list[i].createDate) {
+            this.list[i + 1].myDate = this.list[i + 1].createDate
+            this.index = 1
+          } else {
+            this.index++
+          }
+          this.list[i + 1].count = this.index
+        }
         if (_data.lastPage) {
           this.finished = true
         }
 
         !this.finished && this.query.pageNom++
 
-        console.log(_data.lastPage)
-      //
+        this.isLoading = false
+        this.showLoading = false
       } else {
-        this.$toast(handleCardList.errMsg)
+        this.isLoading = false
+        this.showLoading = false
+
+        handleCardList.errMsg && this.$toast(handleCardList.errMsg)
       }
     },
     search_handle () {
@@ -267,9 +322,11 @@ export default {
       this.clearData()
       this.query.cellPhone = keywords
 
-      window.scrollTo(0, 1)
+      window.scroll(0, 1)
     },
     handle_card_item (item, index) {
+      this.scroll = document.documentElement.scrollTop || document.body.scrollTop || window.pageYOffset || 1
+
       const { status, cellPhone } = item
       let path
 
@@ -294,7 +351,7 @@ export default {
         cellPhone: '',
         type
       }
-      window.scrollTo(0, 1)
+      window.scroll(0, 1)
     },
     classify_handle (status) {
       this.loading = false
@@ -313,8 +370,8 @@ export default {
     input_blur () {
       // document.body.scrollTop = document.documentElement.scrollTop - 1
       setTimeout(() => {
-        var scrollHeight = document.documentElement.scrollTop || document.body.scrollTop || 0
-        window.scrollTo(0, Math.max(scrollHeight, 0))
+        // var scrollHeight = document.documentElement.scrollTop || document.body.scrollTop || 0
+        // window.scrollTo(0, Math.max(scrollHeight, 0))
       }, 100)
     },
     touchS (e) {
@@ -355,6 +412,11 @@ export default {
 </script>
 <style lang="stylus" scoped>
   #handleCardInfo{
+    // position absolute
+    // top 0
+    // left 0
+    // bottom 0
+    // right 0
     .van-cell{
       padding-left 0
       padding-right 0
@@ -431,69 +493,93 @@ export default {
       }
       .list{
         // margin-top 3px
-        .item{
-          background: #fff;
-          height 44px
-          position relative
-          // margin 0 20px
-          border-bottom 1px solid #EFEFF4
-          &:last-child{
-            border-bottom none
-          }
-          span{
-            flex: 1;
-            &:last-child{
-              text-align center
-              // height 40px
-              // width: 40px
-              // flex: inherit;
-            }
-          }
-          .list-item-info{
-            display flex
-            justify-content space-around
-            align-items center
-            font-size:15px;
-            font-family:PingFang-SC-Medium;
-            font-weight:500;
-            color:rgba(51,51,51,1);
-            height 100%
-            width 100%
-            position absolute;
-            left 0px;
-            z-index:5;
-            background #fff;
-            transition:left 200ms;
-            img{
-              width: 40px;
-              height:40px;
-            }
-            &.active{
-              left: -44px;
-            }
-          }
-          .list-swiper-operate-btn{
-            position absolute;
-            right:0px;
-            display:flex;
-            height:100%;
-            div{
-              width:44px;
-              font-size:14px;
-              font-family:PingFang-SC-Medium;
-              font-weight:500;
-              height: 100%;
-              color:#fff;
+        // overflow scroll
+        .item-box{
+          .myDate{
+            height 30px
+            display: flex;
+            font-size: 14px;
+            padding: 0 30px;
+            align-items: center;
+            justify-content center;
+            // border-bottom: 2px solid #eee;
+            background: #f9f7f7;
+            color: #6f00ff;
+            font-weight: 500;
+            span{
               display flex;
-              justify-content center;
-              align-items center;
-              &.del{
-                background:#c7c7cc;
+              // width 30%;
+            }
+          }
+          .item{
+            background: #fff;
+            height 44px
+            position relative
+            // margin 0 20px
+            border-bottom 1px solid #F2F2F2
+            span{
+              flex: 1;
+              &:last-child{
+                text-align center
+                // height 40px
+                // width: 40px
+                // flex: inherit;
               }
             }
+            .list-item-info{
+              display flex
+              justify-content space-around
+              align-items center
+              font-size:15px;
+              font-family:PingFang-SC-Medium;
+              font-weight:500;
+              color:rgba(51,51,51,1);
+              height 100%
+              width 100%
+              position absolute;
+              left 0px;
+              z-index:5;
+              background #fff;
+              transition:left 200ms;
+              .name{
+                span{
+                  display flex;
+                  width 50px
+                }
+              }
+              img{
+                width: 40px;
+                height:40px;
+              }
+              &.active{
+                left: -44px;
+              }
+            }
+            .list-swiper-operate-btn{
+              position absolute;
+              right:0px;
+              display:flex;
+              height:100%;
+              div{
+                width:44px;
+                font-size:14px;
+                font-family:PingFang-SC-Medium;
+                font-weight:500;
+                height: 100%;
+                color:#fff;
+                display flex;
+                justify-content center;
+                align-items center;
+                &.del{
+                  background:#c7c7cc;
+                }
+              }
+            }
+            // margin-bottom 3px
           }
-          // margin-bottom 3px
-
+          // &:last-child{
+          //   border-bottom none
+          // }
         }
       }
     }

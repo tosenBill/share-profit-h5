@@ -1,9 +1,9 @@
 <template>
   <div class="header-nav">
     <header>
-      <!-- <div class="back-box">
+      <div class="back-box">
         <span @click="go_back" class="arrow arrow-left"></span>
-      </div> -->
+      </div>
       <div class="title">{{headerTitle.title}}</div>
       <!-- <div class="add-box" v-if="headerTitle && headerTitle.hasAddBtn" @click="add_handle">
         <strong class="add-btn">＋</strong>

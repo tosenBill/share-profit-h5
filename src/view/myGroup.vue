@@ -3,6 +3,8 @@
     <header-nav :headerNav = 'headerNav' @addHasClick="add_handle">
       <!-- <div slot="addBtn"></div> -->
     </header-nav>
+    <!-- <header-title :headerTitle = 'headerTitle' @addHasClick="add_handle">
+    </header-title> -->
     <header>
       <div class="tabs">
         <div
@@ -27,36 +29,43 @@
       </form>
     </header>
     <section class="">
-
+      <van-loading v-if="showLoading" color="#1989fa" size="20px">加载中...</van-loading>
       <div class="group-list">
-        <van-list
-          v-model="loading"
-          :finished="finished"
-          finished-text="没有更多了"
-          @load="onLoad"
-          :offset="10"
-          :immediate-check="true"
-        >
-          <van-cell>
-            <div class="item" v-for="(item, index) in list" :key="index">
-              <div class="list-item-info"
-                :class="{active: item.cellPhone == flag, noActive: item.cellPhone !== flag}"
-                @touchstart="touchS"
-                @touchmove="touchM($event,item)"
-                @click="handle_card_item(item, index)">
-                <div class="name">{{item.name || ''}}</div>
-                <div class="phone">{{item.cellPhone || ''}}</div>
-                <div class="img-box">
-                  <img v-if="item.status == '1'" src="static/images/pass.png" alt="">
-                  <img v-else src="static/images/not-pass.png" alt="">
+        <van-pull-refresh v-model="isLoading" @refresh="onRefresh" >
+          <van-list
+            v-model="loading"
+            :finished="finished"
+            finished-text="没有更多了"
+            @load="onLoad"
+            :offset="10"
+            :immediate-check="true"
+          >
+            <!-- <van-cell> -->
+            <div v-for="(item, index) in list" :key="index" class="item-box">
+              <div class="myDate" v-if="item.myDate"><span>{{item.myDate}}</span></div>
+              <div class="item">
+                <div class="list-item-info"
+                  :class="{active: item.cellPhone == flag, noActive: item.cellPhone !== flag}"
+                  @touchstart="touchS"
+                  @touchmove="touchM($event,item)"
+                  @click="handle_card_item(item, index)">
+                  <div class="count">{{item.count}}</div>
+                  <div class="name">{{item.name || ''}}</div>
+                  <div class="phone">{{item.cellPhone || ''}}</div>
+                  <div class="user-type">{{item.userType || ''}}</div>
+                  <div class="img-box">
+                    <img v-if="item.status == '1'" src="static/images/pass.png" alt="">
+                    <img v-else src="static/images/not-pass.png" alt="">
+                  </div>
+                </div>
+                <div class="list-swiper-operate-btn">
+                  <div class="del" @click="operate_handle('del', item)">删除</div>
                 </div>
               </div>
-              <div class="list-swiper-operate-btn">
-                <div class="del" @click="operate_handle('del', item)">删除</div>
-              </div>
             </div>
-          </van-cell>
-        </van-list>
+            <!-- </van-cell> -->
+          </van-list>
+        </van-pull-refresh>
       </div>
     </section>
   </div>
@@ -64,7 +73,8 @@
 <script>
 import { mapGetters } from 'vuex'
 import HeaderNav from '@/components/HeaderNav.vue'
-import { List } from 'vant'
+import HeaderTitle from '@/components/HeaderTitle.vue'
+import { List, PullRefresh, Loading } from 'vant'
 
 export default {
   data () {
@@ -73,7 +83,8 @@ export default {
       startX: 0,
       delBtnWidth: 50,
       headerNav: {
-        hasAddBtn: true
+        hasAddBtn: true,
+        title: '查看工号'
       },
       keywords: '',
       tabs: [],
@@ -84,21 +95,32 @@ export default {
         type: 0
       },
       list: [],
+      showLoading: false,
+      isLoading: false, // 下拉刷新
       loading: false,
       finished: false,
       directCount: '',
-      indirectCount: ''
+      indirectCount: '',
+      scroll: 1,
+      index: 1
     }
   },
   components: {
+    HeaderTitle,
     HeaderNav,
-    List
+    List,
+    PullRefresh,
+    Loading
   },
   computed: {
     ...mapGetters(['userInfo'])
   },
   activated () {
-    this.clearData()
+    // this.clearData()
+
+    setTimeout(() => {
+      window.scroll(0, this.scroll)
+    }, 0)
 
     const type = this.userInfo.type
     console.log(type)
@@ -130,7 +152,30 @@ export default {
   mounted () {
 
   },
+  beforeRouteEnter (to, from, next) {
+    if (from.fullPath === '/home') {
+      next(vm => {
+        vm.scroll = 1
+      })
+    } else {
+      next()
+    }
+  },
   methods: {
+    // 下拉刷新
+    onRefresh () {
+      this.list = []
+      this.isLoading = false
+      this.showLoading = true
+
+      this.getMyGroupList({
+        ...this.query,
+        pageNom: 1
+      })
+      // this.query.pageNom = 1
+      // this.onLoad()
+      // window.scroll(0, 1)
+    },
     operate_handle (type, item) {
       console.log(item)
       // 掉接口 myGroupListDel
@@ -147,6 +192,8 @@ export default {
         })
     },
     handle_card_item (item, index) {
+      this.scroll = document.documentElement.scrollTop || document.body.scrollTop || window.pageYOffset || 1
+
       const { status, cellPhone } = item
       let path
 
@@ -191,6 +238,7 @@ export default {
       }
     },
     async getMyGroupList (params) {
+      this.index = 1
       const getMyGroupList = await this.$http.myGroupList(params).catch(err => console.log(err))
 
       this.loading = false
@@ -200,16 +248,39 @@ export default {
           ..._data.records
         )
 
+        if (this.list.length === 1) {
+          this.list[0].count = 1
+          this.list[0].myDate = this.list[0].createDate
+        }
+
+        for (let i = 0; i < this.list.length - 1; i++) {
+          this.list[i].count = this.index
+
+          this.list[0].myDate = this.list[0].createDate
+          if (this.list[i + 1].createDate !== this.list[i].createDate) {
+            this.list[i + 1].myDate = this.list[i + 1].createDate
+            this.index = 1
+          } else {
+            this.index++
+          }
+          this.list[i + 1].count = this.index
+        }
+
         if (_data.lastPage) {
           this.finished = true
         }
 
         !this.finished && this.query.pageNom++
 
-        console.log(_data.lastPage)
+        this.isLoading = false
+        this.showLoading = false
       //
       } else {
-        this.$toast(getMyGroupList.errMsg)
+        this.isLoading = false
+        this.showLoading = false
+        if (getMyGroupList && getMyGroupList.errMsg) {
+          this.$toast(getMyGroupList.errMsg)
+        }
       }
     },
     add_handle () {
@@ -333,6 +404,24 @@ export default {
     section{
       margin-top 10px
       .group-list{
+        .item-box{
+          .myDate{
+            height 30px
+            display: flex;
+            font-size: 14px;
+            padding: 0 30px;
+            align-items: center;
+            justify-content center;
+            // border-bottom: 2px solid #eee;
+            background: #f9f7f7;
+            color: #6f00ff;
+            font-weight: 500;
+            span{
+              display flex;
+              // width 30%;
+            }
+          }
+        }
         .item{
           position relative
           padding-left 10px
@@ -348,7 +437,12 @@ export default {
             z-index:5;
             background #fff;
             transition:left 200ms;
-            padding-left 30px
+            padding-left 10px
+            padding-right 10px
+            .user-type{
+              width 40px
+              // margin-right 5px
+            }
             .name,
             .phone{
               flex: 1;
@@ -357,14 +451,19 @@ export default {
               font-weight:500;
               color:rgba(51,51,51,1);
             }
+            .count{
+              width: 20px
+              text-align left
+            }
             .phone{
               // margin-left 95px
               text-align center
             }
             .img-box{
-              flex: 1;
+              // flex: 1;
               display flex;
               justify-content center;
+              width: 44px;
               img{
                 width: 40px;
                 height:40px;

@@ -8,6 +8,24 @@
           <div class="status-content clear">
             <div class="item">
               <span class="status-judge"
+                :class="{'pass': personInfo.isPay == 1, 'failed': personInfo.isPay == 2}"
+              >
+                <i class="fa fa-check" aria-hidden="true"></i>
+                <i class="fa fa-exclamation" aria-hidden="true"></i>
+              </span>
+              <span class="word">充值缴费</span>
+            </div>
+            <div class="item">
+              <span class="status-judge"
+                :class="{'pass': personInfo.isFreeze == 1, 'failed': personInfo.isFreeze == 2}"
+              >
+                <i class="fa fa-check" aria-hidden="true"></i>
+                <i class="fa fa-exclamation" aria-hidden="true"></i>
+              </span>
+              <span class="word">余额宝冻结</span>
+            </div>
+            <div class="item">
+              <span class="status-judge"
                 :class="{'pass': personInfo.auditStatus == 1, 'failed': personInfo.auditStatus == 2}"
               >
                 <i class="fa fa-check" aria-hidden="true"></i>
@@ -17,30 +35,12 @@
             </div>
             <div class="item">
               <span class="status-judge"
-                :class="{'pass': personInfo.isFreeze == 1, 'failed': personInfo.isFreeze == 2}"
-              >
-                <i class="fa fa-check" aria-hidden="true"></i>
-                <i class="fa fa-exclamation" aria-hidden="true"></i>
-              </span>
-              <span class="word">充值缴费</span>
-            </div>
-            <div class="item">
-              <span class="status-judge"
-                :class="{'pass': personInfo.isPay == 1, 'failed': personInfo.isPay == 2}"
-              >
-                <i class="fa fa-check" aria-hidden="true"></i>
-                <i class="fa fa-exclamation" aria-hidden="true"></i>
-              </span>
-              <span class="word">余额宝冻结</span>
-            </div>
-            <div class="item">
-              <span class="status-judge"
                 :class="{'pass': personInfo.logisticsStatus == 1, 'failed': personInfo.logisticsStatus == 2}"
               >
                 <i class="fa fa-check" aria-hidden="true"></i>
                 <i class="fa fa-exclamation" aria-hidden="true"></i>
               </span>
-              <span class="word">号卡邮寄</span>
+              <span class="word">权益卡邮寄</span>
             </div>
             <div class="item">
               <span class="status-judge"
@@ -49,12 +49,19 @@
                 <i class="fa fa-check" aria-hidden="true"></i>
                 <i class="fa fa-exclamation" aria-hidden="true"></i>
               </span>
-              <span class="word">激活号卡</span>
+              <span class="word">权益卡激活</span>
+            </div>
+            <div class="item">
+              <span class="status-judge">
+                <i class="fa fa-check" aria-hidden="true"></i>
+                <i class="fa fa-exclamation" aria-hidden="true"></i>
+              </span>
+              <span class="word">总部结算</span>
             </div>
           </div>
         </div>
         <div class="detail-tip" style="color:#e4393c" v-if="personInfo.errorMsg">{{personInfo.errorMsg || ''}}</div>
-        <div class="logistics" v-if="personInfo.logisticsNum">
+        <div class="logistics" v-if="personInfo.logisticsNum && personInfo.activateStatus != 1">
           <div class="logistics-item">
             <div>
               <span class="label">物流公司：</span>
@@ -236,8 +243,9 @@ export default {
               display flex
               align-items: center;
               float left
-              margin-right 40px
+              // margin-right 40px
               margin-bottom 15px
+              width: 33%;
               &.item:nth-child(3n+0) {
                 margin-right 0
               }

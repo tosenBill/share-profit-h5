@@ -4,7 +4,7 @@
     <section class="padding-10">
       <div class="form-list">
         <div class="form-item status">
-          <div class="label">审核状态</div>
+          <div class="label">当前状态</div>
           <input readonly="readonly" v-model="personInfo.status" type="text" placeholder="" @blur="input_blur">
         </div>
         <div class="form-item">
@@ -81,7 +81,7 @@ export default {
 
       if (getHandleCardDetailByPhone && getHandleCardDetailByPhone.code === '00000-00000') {
         console.log(getHandleCardDetailByPhone.data)
-        const status = getHandleCardDetailByPhone.data.status === '1' ? '通过' : '未通过'
+        const status = getHandleCardDetailByPhone.data.status === '1' ? '已完成' : '未完成'
 
         this.personInfo = {
           ...this.personInfo,
