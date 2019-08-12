@@ -53,7 +53,7 @@
             </div>
           </div>
         </div>
-        <p class="unCompleteCount" v-if="pageComplete && !unCompleteCount">总部结算中</p>
+        <p class="unCompleteCount" v-if="pageComplete && !unCompleteCount && showHQ">总部结算中</p>
         <div class="detail-tip" style="color:#e4393c" v-if="personInfo.errorMsg">{{personInfo.errorMsg || ''}}</div>
         <div class="logistics" v-if="personInfo.logisticsNum && personInfo.activateStatus != 1">
           <div class="logistics-item">
@@ -126,6 +126,7 @@ import HeaderNav from '@/components/HeaderNav.vue'
 export default {
   data () {
     return {
+      showHQ: false,
       unCompleteCount: 0,
       pageComplete: false, // 数据是否加载完
       personInfo: {
@@ -154,8 +155,10 @@ export default {
   computed: {
   },
   activated () {
+    this.showHQ = false
     this.pageComplete = false
     this.cellPhone = this.$route.params.cellPhone
+
     console.log(this.cellPhone)
     this.loadingToast = Toast.loading({
       duration: 0, // 持续展示 toast
@@ -172,7 +175,6 @@ export default {
   methods: {
     async getHandleCardDetailByPhone (params) {
       const getHandleCardDetailByPhone = await this.$http.getHandleCardDetailByPhone(params).catch(err => console.log(err))
-
       if (getHandleCardDetailByPhone && getHandleCardDetailByPhone.code === '00000-00000') {
         console.log(getHandleCardDetailByPhone.data)
         this.personInfo = {
@@ -187,14 +189,12 @@ export default {
         this.personInfo.isFreeze !== '1' && this.unCompleteCount++
         this.personInfo.isPay !== '1' && this.unCompleteCount++
 
-        // this.unCompleteCount
-        this.pageComplete = true
-        this.loadingToast.clear()
+        this.showHQ = true
       } else {
-        this.pageComplete = true
-        this.loadingToast.clear()
         this.$toast(getHandleCardDetailByPhone.errMsg)
       }
+      this.loadingToast.clear()
+      this.pageComplete = true
     }
   },
   deactivated () {
