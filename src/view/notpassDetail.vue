@@ -33,7 +33,7 @@
               </span>
               <span class="word">资料审核</span>
             </div>
-            <div class="item">
+            <div class="item" v-if="!personInfo.cardType">
               <span class="status-judge"
                 :class="{'pass': personInfo.logisticsStatus == 1, 'failed': personInfo.logisticsStatus == 2}"
               >
@@ -42,7 +42,7 @@
               </span>
               <span class="word">权益卡邮寄</span>
             </div>
-            <div class="item">
+            <div class="item" v-if="!personInfo.cardType">
               <span class="status-judge"
                 :class="{'pass': personInfo.activateStatus == 1, 'failed': personInfo.activateStatus == 2}"
               >
@@ -51,13 +51,6 @@
               </span>
               <span class="word">权益卡激活</span>
             </div>
-            <!-- <div class="item">
-              <span class="status-judge">
-                <i class="fa fa-check" aria-hidden="true"></i>
-                <i class="fa fa-exclamation" aria-hidden="true"></i>
-              </span>
-              <span class="word">总部结算</span>
-            </div> -->
           </div>
         </div>
         <p class="unCompleteCount" v-if="pageComplete && !unCompleteCount">总部结算中</p>
@@ -142,6 +135,7 @@ export default {
         setMeal: '',
         deliveryType: '',
         address: '',
+        cardType: 1, // 0：线上；1：熟卡
         auditStatus: 0, // 审核状态 --- 0：没操作；1，已操作；2：异常
         activateStatus: 0, // 激活状态
         logisticsStatus: 0, // 物流状态
@@ -186,6 +180,7 @@ export default {
           ...getHandleCardDetailByPhone.data
         }
 
+        console.log(this.personInfo)
         this.personInfo.auditStatus !== '1' && this.unCompleteCount++
         this.personInfo.activateStatus !== '1' && this.unCompleteCount++
         this.personInfo.logisticsStatus !== '1' && this.unCompleteCount++

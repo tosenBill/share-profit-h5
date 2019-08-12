@@ -74,11 +74,14 @@ export default {
   activated () {
     const userInfo = this.userInfo
     console.log(userInfo)
+
     this.myUserInfo = {
       ...this.myUserInfo,
       ...userInfo
     }
-    console.log(this.myUserInfo)
+
+    !this.myUserInfo.idCard && (this.myUserInfo.name = '')
+    console.log(!this.myUserInfo.idCard)
   },
   mounted () {
     console.log('userInfo mounted invoked!')

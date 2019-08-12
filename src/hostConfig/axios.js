@@ -101,7 +101,15 @@ axios.interceptors.response.use(
         // window._Vue.$store.dispatch('setLogin',false);
         break
       }
-      case 405:
+      case 504: {
+        window._Vue.$notify({
+          message: '服务器504',
+          duration: 1000,
+          background: '#ff4444'
+        })
+        window._Vue.$router.replace({ path: '/loginIn' })
+        break
+      }
       case 500:
       default:
         console.log('server err')
