@@ -33,7 +33,7 @@
               </span>
               <span class="word">资料审核</span>
             </div>
-            <div class="item" v-if="!personInfo.cardType">
+            <div class="item" v-if="personInfo.cardType == '0'">
               <span class="status-judge"
                 :class="{'pass': personInfo.logisticsStatus == 1, 'failed': personInfo.logisticsStatus == 2}"
               >
@@ -42,7 +42,7 @@
               </span>
               <span class="word">权益卡邮寄</span>
             </div>
-            <div class="item" v-if="!personInfo.cardType">
+            <div class="item" v-if="personInfo.cardType == '0'">
               <span class="status-judge"
                 :class="{'pass': personInfo.activateStatus == 1, 'failed': personInfo.activateStatus == 2}"
               >
