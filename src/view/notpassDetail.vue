@@ -136,7 +136,7 @@ export default {
         setMeal: '',
         deliveryType: '',
         address: '',
-        cardType: 1, // 0：线上；1：熟卡
+        cardType: '1', // 0：线上；1：熟卡
         auditStatus: 0, // 审核状态 --- 0：没操作；1，已操作；2：异常
         activateStatus: 0, // 激活状态
         logisticsStatus: 0, // 物流状态
@@ -181,19 +181,22 @@ export default {
           ...this.personInfo,
           ...getHandleCardDetailByPhone.data
         }
+        // console.log(this.personInfo)
 
-        console.log(this.personInfo)
         this.personInfo.auditStatus !== '1' && this.unCompleteCount++
-        this.personInfo.activateStatus !== '1' && this.unCompleteCount++
-        this.personInfo.logisticsStatus !== '1' && this.unCompleteCount++
         this.personInfo.isFreeze !== '1' && this.unCompleteCount++
         this.personInfo.isPay !== '1' && this.unCompleteCount++
+        if (this.personInfo.cardType === '0') {
+          this.personInfo.activateStatus !== '1' && this.unCompleteCount++
+          this.personInfo.logisticsStatus !== '1' && this.unCompleteCount++
+        }
 
         this.showHQ = true
+        this.loadingToast.clear()
       } else {
+        this.loadingToast.clear() // 这个放此处，防止'this.$toast'被这段代码清空（duration时间短）
         this.$toast(getHandleCardDetailByPhone.errMsg)
       }
-      this.loadingToast.clear()
       this.pageComplete = true
     }
   },
@@ -206,6 +209,7 @@ export default {
       setMeal: '',
       deliveryType: '',
       address: '',
+      cardType: '1', // 0：线上；1：熟卡
       auditStatus: 0, // 审核状态 --- 0：没操作；1，已操作；2：异常
       activateStatus: 0, // 激活状态
       logisticsStatus: 0, // 物流状态
