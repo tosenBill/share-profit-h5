@@ -69,8 +69,9 @@
                   <div>{{item.count}}</div>
                   <div class="name"><span>{{item.name || ''}}</span></div>
                   <div class="phone">{{item.cellPhone || ''}}</div>
-                  <img v-if="item.status == '1'" src="static/images/pass.png" alt="">
-                  <img v-else src="static/images/not-pass.png" alt="">
+                  <img v-if="item.status == '0'" src="static/images/not-complete.jpg" alt="">
+                  <img v-else-if="item.status == '1'" src="static/images/has-account.jpg" alt="">
+                  <img v-else src="static/images/wait-account.jpg" alt="">
                 </div>
                 <div class="list-swiper-operate-btn">
                   <div class="del" @click="operate_handle('edit', item)">编辑</div>
