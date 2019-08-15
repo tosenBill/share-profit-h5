@@ -14,7 +14,7 @@
       </div>
     </section>
     <footer>
-      <div class="operate-btn" @click="loginOut">注销</div>
+      <div class="operate-btn" @click="loginOut">退出</div>
     </footer>
   </div>
 </template>
@@ -43,7 +43,7 @@ export default {
         duration: 0, // 持续展示 toast
         forbidClick: true, // 禁用背景点击
         loadingType: 'spinner',
-        message: '正在注销...'
+        message: '正在退出...'
       })
       this.$http.loginOut().catch(err => {
         console.log(err)
