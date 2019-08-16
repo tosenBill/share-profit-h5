@@ -299,11 +299,17 @@ export default {
     search_handle () {
       event.preventDefault() // 默认是换行
       this.$refs.search_input.blur()
-      const keywords = this.query.cellPhone
+      const cellPhone = this.query.cellPhone // 先保存状态
+      const type = this.query.type // 先保存一下，在清空
 
       this.clearData()
 
-      this.query.cellPhone = keywords
+      this.query = {
+        ...this.query,
+        pageNom: 1,
+        cellPhone,
+        type
+      }
 
       window.scrollTo(0, 1)
       // this.getMyGroupList(this.query)

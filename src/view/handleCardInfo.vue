@@ -333,10 +333,19 @@ export default {
       event.preventDefault() // 默认是换行
       this.$refs.search_input.blur()
 
-      const keywords = this.query.cellPhone
+      const cellPhone = this.query.cellPhone
+      const status = this.query.status // 先保存一下，在清空
+      const type = this.query.type // 先保存一下，在清空
 
       this.clearData()
-      this.query.cellPhone = keywords
+
+      this.query = {
+        ...this.query,
+        pageNom: 1,
+        cellPhone,
+        status,
+        type
+      }
 
       window.scroll(0, 1)
     },
