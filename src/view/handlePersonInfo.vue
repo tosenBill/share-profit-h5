@@ -94,7 +94,8 @@ export default {
       option1: [
         // { text: '办理套餐档位', value: 0 },
         { text: '108套餐', value: 1 },
-        { text: '198套餐', value: 2 }
+        { text: '128套餐', value: 2 },
+        { text: '198套餐', value: 3 }
       ],
       option2: [
         { text: '总部发放', value: 1 },
@@ -201,6 +202,7 @@ export default {
       }
     },
     async complete () {
+      console.log(this.personInfo)
       if (this.validateForm(this.personInfo) && this.canSubmit) {
         this.loadingToast = Toast.loading({
           duration: 0, // 持续展示 toast
