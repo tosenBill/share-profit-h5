@@ -94,7 +94,6 @@ export default {
       option1: [
         // { text: '办理套餐档位', value: 0 },
         { text: '108套餐', value: 1 },
-        { text: '128套餐', value: 2 },
         { text: '198套餐', value: 3 }
       ],
       option2: [
